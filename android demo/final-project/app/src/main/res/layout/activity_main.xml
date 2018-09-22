@@ -9,6 +9,7 @@
     android:paddingRight="0dp"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="edu.cmu.stuco.android.yusihao.my2048.MainActivity">
+
     <android.support.percent.PercentRelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -20,14 +21,6 @@
             app:layout_heightPercent="12.5%"
             android:layout_width="0dp"
             android:layout_height="0dp">
-            <TextView
-                android:id="@+id/scoreDisplay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="30sp"
-                android:layout_alignParentRight="true"
-                android:text="Score:0"
-                />
         </RelativeLayout>
         <android.support.percent.PercentRelativeLayout
             android:id="@+id/tileBase"
@@ -35,244 +28,9 @@
             app:layout_widthPercent="90%"
             app:layout_aspectRatio="100%"
             android:layout_centerHorizontal="true"
-            android:layout_below="@id/display">
-            <LinearLayout
-                android:id="@+id/row1"
-                android:layout_centerHorizontal="true"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                app:layout_heightPercent="25%"
-                style="?android:attr/buttonBarStyle">
+            android:layout_below="@id/display
+            >
 
-                <TextView
-                    android:id="@+id/r0c0"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:background="#176db1"
-                    android:textSize="40sp"
-                    android:textColor="#FFFFFF"
-                    android:textColorHighlight="#de1da9"
-                    android:text = ""
-                    />
-
-                <TextView
-                    android:id="@+id/r0c1"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:background="#176db1"
-                    android:textSize="40sp"
-                    android:textColor="#FFFFFF"
-                    android:textColorHighlight="#de1da9"
-                    android:text = ""/>
-
-                <TextView
-                    android:id="@+id/r0c2"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:background="#176db1"
-                    android:textSize="40sp"
-                    android:textColor="#FFFFFF"
-                    android:textColorHighlight="#de1da9"
-                    android:text = ""
-                    />
-
-                <TextView
-                    android:id="@+id/r0c3"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:background="#176db1"
-                    android:textSize="40sp"
-                    android:textColor="#FFFFFF"
-                    android:textColorHighlight="#de1da9"
-                    android:text = ""
-                    />
-                />
-                <!--android:onClickListener="@{viewModel.buttonClickListener}"-->
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/row2"
-                android:layout_below="@id/row1"
-                android:layout_centerHorizontal="true"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                app:layout_heightPercent="25%"
-                style="?android:attr/buttonBarStyle">
-                <TextView
-                    android:id="@+id/r1c0"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:background="#177ab1"
-                    android:textSize="40sp"
-                    android:textColor="#FFFFFF"
-                    android:textColorHighlight="#de1da9"
-                    android:text = ""
-                    />
-
-                <TextView
-                    android:id="@+id/r1c1"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:background="#177ab1"
-                    android:textSize="40sp"
-                    android:textColor="#FFFFFF"
-                    android:textColorHighlight="#de1da9"
-                    android:text = ""/>
-
-                <TextView
-                    android:id="@+id/r1c2"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:background="#177ab1"
-                    android:textSize="40sp"
-                    android:textColor="#FFFFFF"
-                    android:textColorHighlight="#de1da9"
-                    android:text = ""
-                    />
-
-                <TextView
-                    android:id="@+id/r1c3"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:background="#177ab1"
-                    android:textSize="40sp"
-                    android:textColor="#FFFFFF"
-                    android:textColorHighlight="#de1da9"
-                    android:text = ""
-                    />
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/row3"
-                android:layout_below="@id/row2"
-                android:layout_centerHorizontal="true"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                app:layout_heightPercent="25%"
-                style="?android:attr/buttonBarStyle">
-
-                <TextView
-                    android:id="@+id/r2c0"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:background="#1787b1"
-                    android:textSize="40sp"
-                    android:textColor="#FFFFFF"
-                    android:textColorHighlight="#de1da9"
-                    android:text = ""
-                    />
-
-                <TextView
-                    android:id="@+id/r2c1"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:background="#1787b1"
-                    android:textSize="40sp"
-                    android:textColor="#FFFFFF"
-                    android:textColorHighlight="#de1da9"
-                    android:text = ""/>
-
-                <TextView
-                    android:id="@+id/r2c2"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:background="#1787b1"
-                    android:textSize="40sp"
-                    android:textColor="#FFFFFF"
-                    android:textColorHighlight="#de1da9"
-                    android:text = ""
-                    />
-
-                <TextView
-                    android:id="@+id/r2c3"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:background="#1787b1"
-                    android:textSize="40sp"
-                    android:textColor="#FFFFFF"
-                    android:textColorHighlight="#de1da9"
-                    android:text = ""/>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/row4"
-                android:layout_below="@id/row3"
-                android:layout_centerHorizontal="true"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                app:layout_heightPercent="25%"
-                style="?android:attr/buttonBarStyle">
-                <TextView
-                    android:id="@+id/r3c0"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:background="#1794b1"
-                    android:textSize="40sp"
-                    android:textColor="#FFFFFF"
-                    android:textColorHighlight="#de1da9"
-                    android:text = ""
-                    />
-
-                <TextView
-                    android:id="@+id/r3c1"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:background="#1794b1"
-                    android:textSize="40sp"
-                    android:textColor="#FFFFFF"
-                    android:textColorHighlight="#de1da9"
-                    android:text = ""/>
-
-                <TextView
-                    android:id="@+id/r3c2"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:background="#1794b1"
-                    android:textSize="40sp"
-                    android:textColor="#FFFFFF"
-                    android:textColorHighlight="#de1da9"
-                    android:text = ""
-                    />
-
-                <TextView
-                    android:id="@+id/r3c3"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:background="#1794b1"
-                    android:textSize="40sp"
-                    android:textColor="#FFFFFF"
-                    android:textColorHighlight="#de1da9"
-                    android:text = ""/>
-            </LinearLayout>
         </android.support.percent.PercentRelativeLayout>
         <Button
             android:id="@+id/restart"
@@ -282,7 +40,7 @@
             android:layout_alignRight="@id/tileBase"
             android:layout_marginTop="30px"
             android:background="#94b1"
-            android:text = "Reset"/>
+            android:text = "Mute"/>
     </android.support.percent.PercentRelativeLayout>
 </RelativeLayout>
 
