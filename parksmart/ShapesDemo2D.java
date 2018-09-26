@@ -1,46 +1,17 @@
-/*
- * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *   - Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *
- *   - Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *
- *   - Neither the name of Oracle or the names of its
- *     contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
- * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
-
-
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import javax.swing.*;
 
-/* 
- * This is like the FontDemo applet in volume 1, except that it 
- * uses the Java 2D APIs to define and render the graphics and text.
- */
-
 public class ShapesDemo2D extends JApplet {
+    private int x;
+    private int y;
+
+    public ShapesDemo2D(int x_p, int y_p) {
+        // Assignments should not re-declare the fields
+        x = x_p;
+        y = y_p;
+    }
     final static int maxCharHeight = 15;
     final static int minFontSize = 6;
 
@@ -100,10 +71,12 @@ public class ShapesDemo2D extends JApplet {
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        Dimension d = getSize();
+        Dimension d = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         int gridWidth = d.width / 6;
         int gridHeight = d.height / 2;
 
+        int x_center = d.width/2;
+        int y_center = d.height/2;
         fontMetrics = pickFont(g2, "Filled and Stroked GeneralPath",
                                gridWidth);
 
@@ -114,126 +87,31 @@ public class ShapesDemo2D extends JApplet {
         g2.draw3DRect(3, 3, d.width - 7, d.height - 7, false);
         g2.setPaint(fg);
 
-        int x = 5;
-        int y = 7;
-        int rectWidth = gridWidth - 2*x;
+        int rectWidth = 100;
         int stringY = gridHeight - 3 - fontMetrics.getDescent();
-        int rectHeight = stringY - fontMetrics.getMaxAscent() - y - 2;
-
-        // draw Line2D.Double
-        g2.draw(new Line2D.Double(x, y+rectHeight-1, x + rectWidth, y));
-        g2.drawString("Line2D", x, stringY);
-        x += gridWidth;
-
-        // draw Rectangle2D.Double
-        g2.setStroke(stroke);
-        g2.draw(new Rectangle2D.Double(x, y, rectWidth, rectHeight));
-        g2.drawString("Rectangle2D", x, stringY);
-        x += gridWidth;      
-
-        // draw  RoundRectangle2D.Double
-        g2.setStroke(dashed);
-        g2.draw(new RoundRectangle2D.Double(x, y, rectWidth, 
-                                            rectHeight, 10, 10));
-        g2.drawString("RoundRectangle2D", x, stringY);
-        x += gridWidth;
-
-        // draw Arc2D.Double       
-        g2.setStroke(wideStroke);
-        g2.draw(new Arc2D.Double(x, y, rectWidth, rectHeight, 90, 
-                                 135, Arc2D.OPEN));
-        g2.drawString("Arc2D", x, stringY);
-        x += gridWidth;
-
-        // draw Ellipse2D.Double
-        g2.setStroke(stroke);
-        g2.draw(new Ellipse2D.Double(x, y, rectWidth, rectHeight));
-        g2.drawString("Ellipse2D", x, stringY);
-        x += gridWidth;
-
-        // draw GeneralPath (polygon)
-        int x1Points[] = {x, x+rectWidth, x, x+rectWidth};
-        int y1Points[] = {y, y+rectHeight, y+rectHeight, y};
-        GeneralPath polygon = new GeneralPath(GeneralPath.WIND_EVEN_ODD,
-                                              x1Points.length);
-        polygon.moveTo(x1Points[0], y1Points[0]);
-        for ( int index = 1; index < x1Points.length; index++ ) {
-            polygon.lineTo(x1Points[index], y1Points[index]);
-        };
-        polygon.closePath();
-
-        g2.draw(polygon);
-        g2.drawString("GeneralPath", x, stringY);
-
-        // NEW ROW
-        x = 5;
-        y += gridHeight;
-        stringY += gridHeight;
-
-        // draw GeneralPath (polyline)
-
-        int x2Points[] = {x, x+rectWidth, x, x+rectWidth};
-        int y2Points[] = {y, y+rectHeight, y+rectHeight, y};
-        GeneralPath polyline = new GeneralPath(GeneralPath.WIND_EVEN_ODD,
-                                               x2Points.length);
-        polyline.moveTo (x2Points[0], y2Points[0]);
-        for ( int index = 1; index < x2Points.length; index++ ) {
-            polyline.lineTo(x2Points[index], y2Points[index]);
-        };
-
-        g2.draw(polyline);
-        g2.drawString("GeneralPath (open)", x, stringY);
-        x += gridWidth;
-
-        // fill Rectangle2D.Double (red)
-        g2.setPaint(red);
-        g2.fill(new Rectangle2D.Double(x, y, rectWidth, rectHeight));
-        g2.setPaint(fg);
-        g2.drawString("Filled Rectangle2D", x, stringY);
-        x += gridWidth;        
-
-        // fill RoundRectangle2D.Double
-        GradientPaint redtowhite = new GradientPaint(x,y,red,x+rectWidth, y,white);
-        g2.setPaint(redtowhite);
-        g2.fill(new RoundRectangle2D.Double(x, y, rectWidth, 
-                                            rectHeight, 10, 10));
-        g2.setPaint(fg);
-        g2.drawString("Filled RoundRectangle2D", x, stringY);
-        x += gridWidth;
-
-        // fill Arc2D 
-        g2.setPaint(red);
-        g2.fill(new Arc2D.Double(x, y, rectWidth, rectHeight, 90, 
-                                 135, Arc2D.OPEN));
-        g2.setPaint(fg);
-        g2.drawString("Filled Arc2D", x, stringY);
-        x += gridWidth;
-
-        // fill Ellipse2D.Double
-        redtowhite = new GradientPaint(x,y,red,x+rectWidth, y,white);
-        g2.setPaint(redtowhite);
-        g2.fill (new Ellipse2D.Double(x, y, rectWidth, rectHeight));
-        g2.setPaint(fg);
-        g2.drawString("Filled Ellipse2D", x, stringY);
-        x += gridWidth;
+        int rectHeight = 200;
 
 
+        // draw a dot at (x,y)
+        g2.draw(new Line2D.Double(x, y, x+1, x+1));
 
-        // fill and stroke GeneralPath
-        int x3Points[] = {x, x+rectWidth, x, x+rectWidth};
-        int y3Points[] = {y, y+rectHeight, y+rectHeight, y};
-        GeneralPath filledPolygon = new GeneralPath(GeneralPath.WIND_EVEN_ODD,
-                                                    x3Points.length);
-        filledPolygon.moveTo(x3Points[0], y3Points[0]);
-        for ( int index = 1; index < x3Points.length; index++ ) {
-            filledPolygon.lineTo(x3Points[index], y3Points[index]);
-        };
-        filledPolygon.closePath();
-        g2.setPaint(red);
-        g2.fill(filledPolygon);
-        g2.setPaint(fg);
-        g2.draw(filledPolygon);
-        g2.drawString("Filled and Stroked GeneralPath", x, stringY);
+
+        // draw the car
+        Path2D front = new Path2D.Double();
+        front.moveTo(x_center-rectWidth/2, y_center-rectHeight/2);
+        front.curveTo(x_center-rectWidth/2, y_center-rectHeight/2, x_center, y_center-rectHeight/2 - 20, x_center+rectWidth/2, y_center-rectHeight/2);
+        g2.draw(front);
+
+        Path2D back = new Path2D.Double();
+        back.moveTo(x_center-rectWidth/2, y_center+rectHeight/2);
+        back.curveTo(x_center-rectWidth/2, y_center+rectHeight/2, x_center, y_center+rectHeight/2 + 20, x_center+rectWidth/2, y_center+rectHeight/2);
+        g2.draw(back);
+
+        g2.draw(new Line2D.Double(x_center-rectWidth/2, y_center-rectHeight/2, x_center-rectWidth/2, y_center+rectHeight/2));
+        g2.draw(new Line2D.Double(x_center+rectWidth/2, y_center-rectHeight/2, x_center+rectWidth/2, y_center+rectHeight/2));
+
+        // g2.draw(new Rectangle2D.Double(x_center-rectWidth/2, y_center-rectHeight/2, rectWidth, rectHeight));    
+
     }
 
     public static void main(String s[]) {
@@ -241,7 +119,7 @@ public class ShapesDemo2D extends JApplet {
         f.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {System.exit(0);}
         });
-        JApplet applet = new ShapesDemo2D();
+        JApplet applet = new ShapesDemo2D(100,100);
         f.getContentPane().add("Center", applet);
         applet.init();
         f.pack();
