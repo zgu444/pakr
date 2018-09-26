@@ -15,16 +15,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        Button playButton = (Button) findViewById(R.id.play);
-        Button muteButton = (Button) findViewById(R.id.mute);
-
-
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        Button muteButton = findViewById(R.id.mute);
 
         muteButton.setOnClickListener(new View.OnClickListener() {
             @Override
