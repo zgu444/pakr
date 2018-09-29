@@ -2,16 +2,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import javax.swing.*;
+import java.util.*;
 
 public class ShapesDemo2D extends JApplet {
-    private int x;
-    private int y;
 
-    public ShapesDemo2D(int x_p, int y_p) {
-        // Assignments should not re-declare the fields
-        x = x_p;
-        y = y_p;
-    }
     final static int maxCharHeight = 15;
     final static int minFontSize = 6;
 
@@ -28,13 +22,28 @@ public class ShapesDemo2D extends JApplet {
                                                       BasicStroke.CAP_BUTT, 
                                                       BasicStroke.JOIN_MITER, 
                                                       10.0f, dash1, 0.0f);
+    private int x;
+    private int y;
+    private int dist;
+    private ArrayList<SensorAdaptor> left_sensors;
+
+    public ShapesDemo2D(int x_p, int y_p, int distance) {
+        // Assignments should not re-declare the fields
+        x = x_p;
+        y = y_p;
+        dist = distance;
+    }
+
     Dimension totalSize;
     FontMetrics fontMetrics;
+
 
     public void init() {
         //Initialize drawing colors
         setBackground(bg);
         setForeground(fg);
+        left_sensors = new ArrayList();
+        // left_sensors.add(new DummySensorAdaptor(100, 100, 50));
     }
 
     FontMetrics pickFont(Graphics2D g2,
@@ -87,13 +96,9 @@ public class ShapesDemo2D extends JApplet {
         g2.draw3DRect(3, 3, d.width - 7, d.height - 7, false);
         g2.setPaint(fg);
 
-        int rectWidth = 100;
+        int rectWidth = 79;
         int stringY = gridHeight - 3 - fontMetrics.getDescent();
-        int rectHeight = 200;
-
-
-        // draw a dot at (x,y)
-        g2.draw(new Line2D.Double(x, y, x+1, x+1));
+        int rectHeight = 127;
 
 
         // draw the car
@@ -110,7 +115,13 @@ public class ShapesDemo2D extends JApplet {
         g2.draw(new Line2D.Double(x_center-rectWidth/2, y_center-rectHeight/2, x_center-rectWidth/2, y_center+rectHeight/2));
         g2.draw(new Line2D.Double(x_center+rectWidth/2, y_center-rectHeight/2, x_center+rectWidth/2, y_center+rectHeight/2));
 
-        // g2.draw(new Rectangle2D.Double(x_center-rectWidth/2, y_center-rectHeight/2, rectWidth, rectHeight));    
+        // Draw outline on the left side of based on (x,y) of a sensor and its distance feedback 
+
+        g2.drawArc(x_center-rectWidth/2-dist, y_center-rectHeight/2-dist+10, dist*2, dist*2, 173, 15);
+        g2.drawArc(x_center-rectWidth/2-dist, y_center-rectHeight/2-dist+100, dist*2, dist*2, 173, 15);
+        // for(int i = 0; i < left_sensors.size(); i++){
+        //     g2.drawArc(left_sensors.get(0)+dist, left_sensors);
+        // }
 
     }
 
@@ -119,7 +130,7 @@ public class ShapesDemo2D extends JApplet {
         f.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {System.exit(0);}
         });
-        JApplet applet = new ShapesDemo2D(100,100);
+        JApplet applet = new ShapesDemo2D(100, 100, 100);
         f.getContentPane().add("Center", applet);
         applet.init();
         f.pack();

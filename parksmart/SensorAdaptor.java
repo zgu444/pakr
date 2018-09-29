@@ -1,5 +1,4 @@
 public interface SensorAdaptor {
-  
   /**
     Get Distance in Centimeters
   */
