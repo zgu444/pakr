@@ -22,17 +22,8 @@ public class ShapesDemo2D extends JApplet {
                                                       BasicStroke.CAP_BUTT, 
                                                       BasicStroke.JOIN_MITER, 
                                                       10.0f, dash1, 0.0f);
-    private int x;
-    private int y;
-    private int dist;
-    private ArrayList<SensorAdaptor> left_sensors;
 
-    public ShapesDemo2D(int x_p, int y_p, int distance) {
-        // Assignments should not re-declare the fields
-        x = x_p;
-        y = y_p;
-        dist = distance;
-    }
+    private ArrayList<SensorAdaptor> left_sensors;
 
     Dimension totalSize;
     FontMetrics fontMetrics;
@@ -117,8 +108,31 @@ public class ShapesDemo2D extends JApplet {
 
         // Draw outline on the left side of based on (x,y) of a sensor and its distance feedback 
 
-        g2.drawArc(x_center-rectWidth/2-dist, y_center-rectHeight/2-dist+10, dist*2, dist*2, 173, 15);
-        g2.drawArc(x_center-rectWidth/2-dist, y_center-rectHeight/2-dist+100, dist*2, dist*2, 173, 15);
+        g2.drawArc(x_center-rectWidth/2-40, y_center-rectHeight/2-40+10, 40*2, 40*2, 173, 15);
+        int x_arc = x_center-rectWidth/2;
+        int y_arc1 = y_center-rectHeight/2+10;
+        int y_arc2 = y_center-rectHeight/2+60;
+        int y_arc3 = y_center-rectHeight/2+120;
+        int dist1 = 40;
+        int dist2 = 30;
+        int dist3 = 50;
+        int x_1 = (int)(x_arc- dist1*(Math.sin(8)));
+        int y_1_low = (int)(y_arc1 - dist1*(Math.cos(8)));
+        int y_1_high = (int)(y_arc1 + dist1*(Math.cos(8)));
+        
+        int x_2 = (int)(x_arc - dist2*(Math.sin(8)));
+        int y_2_high = (int)(y_arc2 + dist2*(Math.cos(8)));
+        int y_2_low = (int)(y_arc2 - dist2*(Math.cos(8)));
+        
+
+        int x_3 = (int)(x_arc - dist3*(Math.sin(8)));
+        int y_3_high = (int)(y_arc3 + dist3*(Math.cos(8)));
+        int y_3_low = (int)(y_arc3 - dist3*(Math.cos(8)));
+
+        g2.draw(new Line2D.Double(x_1, y_1_low, x_2, y_2_high));
+        g2.draw(new Line2D.Double(x_2, y_2_low, x_3, y_3_high));
+        g2.drawArc(x_center-rectWidth/2-30, y_center-rectHeight/2-30+60, 30*2, 30*2, 173, 15);
+        g2.drawArc(x_center-rectWidth/2-50, y_center-rectHeight/2-50+120, 50*2, 50*2, 173, 15);
         // for(int i = 0; i < left_sensors.size(); i++){
         //     g2.drawArc(left_sensors.get(0)+dist, left_sensors);
         // }
@@ -130,7 +144,7 @@ public class ShapesDemo2D extends JApplet {
         f.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {System.exit(0);}
         });
-        JApplet applet = new ShapesDemo2D(100, 100, 100);
+        JApplet applet = new ShapesDemo2D();
         f.getContentPane().add("Center", applet);
         applet.init();
         f.pack();
