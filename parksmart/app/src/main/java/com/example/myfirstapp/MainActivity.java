@@ -1,7 +1,5 @@
 package com.example.myfirstapp;
 
-import android.animation.AnimatorInflater;
-import android.animation.AnimatorSet;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,7 +12,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         Button muteButton = findViewById(R.id.mute);
 
         muteButton.setOnClickListener(new View.OnClickListener() {
@@ -23,5 +20,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        View carPlot= findViewById(R.id.carPlot);
+
+//        carPlot.setBackgroundDrawable();
     }
+
 }
