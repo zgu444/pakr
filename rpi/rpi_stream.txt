@@ -1,0 +1,34 @@
+gst-launch-1.0 v4l2src ! 'video/x-raw,width=320,height=240,framerate=10/1' ! omxh264enc target-bitrate=500000 control-rate=1 ! 'video/x-h264,profile=high' ! h264parse ! flvmux ! tcpserversink host=PARKRPI.WV.CC.CMU.EDU port=7272
+
+ gst-launch-1.0 v4l2src ! 'video/x-v264,width=1920,height=1080,framerate=30/1' ! h264parse config-interval=1 ! rtph264pay ! udpsink host=10.0.0.129 port=5000 Recipient: 
+
+  gst-launch-1.0 v4l2src ! 'video/x-raw,width=320,height=240,framerate=10/1' ! h264parse config-interval=1 ! rtph264pay ! udpsink host=PARKRPI.WV.CC.CMU.EDU port=5000
+
+  gst-launch-1.0 udpsrc port=5000 ! application/x-rtp,encoding-name=H264,payload=96 ! rtph264depay ! h264parse ! omxh264dec ! glimagesink
+
+
+  raspivid -t 0 -h 720 -w 1080 -fps 25 -hf -b 2000000 -o - \
+    | gst-launch-1.0 -v fdsrc ! h264parse !  rtph264pay \
+    config-interval=1 pt=96 ! gdppay ! tcpserversink \
+    host=localhost port=8080
+
+raspivid -t 0 -h 720 -w 1080 -fps 25 -hf -b 2000000 -o - \
+  | gst-launch-1.0 -v fdsrc ! h264parse ! rtph264pay \
+  config-interval=1 pt=96 ! udpsink host=PARKRPI.WV.CC.CMU.EDU port=5000
+
+raspivid -t 0 -h 720 -w 1080 -fps 25 -hf -b 2000000 -o - \
+  | gst-launch-1.0 -v fdsrc ! h264parse ! rtph264pay \
+  config-interval=1 pt=96 ! tcpserversink host=PARKRPI.WV.CC.CMU.EDU port=7272
+
+
+raspivid -t 0 -h 720 -w 1080 -fps 25 -hf -b 2000000 -o - \
+  | gst-launch-1.0 -v fdsrc ! h264parse ! gdppay \
+  ! tcpserversink host=127.0.0.1 port=7272 &
+
+./test-launch "( tcpclientsrc host=127.0.0.1 port=7272 ! gdpdepay ! rtph264pay name=pay0 pt=96 )"
+
+  On RTSP player or on Android with RTSP Player:
+rtsp://PARKRPI.WV.CC.CMU.EDU:8554/test
+
+  https://stackoverflow.com/questions/13744560/using-gstreamer-to-serve-rtsp-stream-working-example-sought
+  <git chekcout remotes/origin/<gst-version> (1.12)>
