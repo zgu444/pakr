@@ -1,5 +1,7 @@
 package com.example.myfirstapp.comm;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -14,11 +16,11 @@ import java.net.SocketTimeoutException;
 
 public class SocketClient{
     private Socket socket;
-    public static void main(String args[]) throws Exception{
-        SocketClient my_client = new SocketClient(18500);
-        System.out.println(my_client.writeToAndReadFromSocket("1"));
-        my_client.socket.close();
-    }
+//    public static void main(String args[]) throws Exception{
+//        SocketClient my_client = new SocketClient(18500);
+//        System.out.println(my_client.writeToAndReadFromSocket("1"));
+//        my_client.socket.close();
+//    }
 
     public SocketClient(int port){
         String server_name = "PARKRPI.WV.CC.CMU.EDU";
@@ -33,7 +35,7 @@ public class SocketClient{
             
             // print out the result we got back from the server
             //System.out.println(result);
-            System.out.println("connected to "+server_name);
+            Log.d("socket", "connected to "+server_name);
             // close the socket, and we're done
         }
         catch (Exception e)
@@ -68,7 +70,7 @@ public class SocketClient{
         }
         catch (SocketTimeoutException ste)
         {
-            System.err.println("Timed out waiting for the socket.");
+            Log.d("socket err","Timed out waiting for the socket.");
             ste.printStackTrace();
             throw ste;
         }

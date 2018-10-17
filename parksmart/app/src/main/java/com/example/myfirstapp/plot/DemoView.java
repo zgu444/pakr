@@ -4,11 +4,18 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.AttributeSet;
 import android.view.View;
 
 public class DemoView extends View {
     public DemoView(Context context){
         super(context);
+    }
+    public DemoView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+    public DemoView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
     }
 
     @Override protected void onDraw(Canvas canvas) {
@@ -37,13 +44,13 @@ public class DemoView extends View {
         paint.setColor(Color.RED);
         canvas.drawRect(100, 105, 200, 930, paint);
 
-        // draw the rotated text
-        canvas.rotate(-45);
-
-        paint.setStyle(Paint.Style.FILL);
-        canvas.drawText("Graphics Rotation", 40, 180, paint);
-
-        //undo the rotate
-        canvas.restore();
+//        // draw the rotated text
+//        canvas.rotate(-45);
+//
+//        paint.setStyle(Paint.Style.FILL);
+//        canvas.drawText("Graphics Rotation", 40, 180, paint);
+//
+//        //undo the rotate
+//        canvas.restore();
     }
 }

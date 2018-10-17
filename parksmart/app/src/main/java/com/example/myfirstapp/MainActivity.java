@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        View carPlot= findViewById(R.id.carPlot);
+//        View carPlot= findViewById(R.id.carPlot);
 
 //        carPlot.setBackgroundDrawable();
     }

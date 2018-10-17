@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.AttributeSet;
 import android.view.View;
 
 import com.example.myfirstapp.sensors.SensorAdaptor;
@@ -17,7 +18,12 @@ public class CarPlotDemo extends View {
     public CarPlotDemo(Context context){
         super(context);
     }
-
+    public CarPlotDemo(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+    public CarPlotDemo(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
     @Override
     protected void onFinishInflate(){
         super.onFinishInflate();
@@ -67,6 +73,7 @@ public class CarPlotDemo extends View {
 
         int rectWidth = 79;
         int rectHeight = 127;
+
 
         // draw the car
 
