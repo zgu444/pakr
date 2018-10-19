@@ -71,23 +71,32 @@ public class PathPrediction extends JApplet {
         g2.setStroke(dashed);
         g2.setPaint(path);
         
-        int tan = (int) Math.round(Math.tan(Math.toRadians(wheelAngle)));
-        int turn_radius = carLength/tan-carWidth/2;
-        int turn_center_x = x_center+turn_radius;
-        int turn_center_y = y_center+carLength/2;
+        // If wheel turns, draw arcs
+        if (wheelAngle != 0) {
+            double tan = Math.tan(Math.toRadians(wheelAngle));
+            int turn_radius = (int) Math.round(carLength/tan-carWidth/2);
+            int turn_center_x = x_center+turn_radius;
+            int turn_center_y = y_center+carLength/2;
+    
+            int upper_left_x_right = turn_center_x - turn_radius + carWidth/2;
+            int upper_left_y_right = turn_center_y - turn_radius;
+    
+            int upper_left_x_left = turn_center_x - turn_radius - carWidth/2;
+            int upper_left_y_left = turn_center_y - turn_radius - carWidth;
+    
+            // Draw right curve
+            g2.drawArc(upper_left_x_right, upper_left_y_right, 2*turn_radius, 2*turn_radius, 180, 90);
+    
+            // Draw left curve 
+            g2.drawArc(upper_left_x_left, upper_left_y_left, 2*(turn_radius+carWidth), 2*(turn_radius+carWidth), 180, 90);
+        }
 
-        int upper_left_x_right = turn_center_x - turn_radius + carWidth/2;
-        int upper_left_y_right = turn_center_y - turn_radius;
-
-        int upper_left_x_left = turn_center_x - turn_radius - carWidth/2;
-        int upper_left_y_left = turn_center_y - turn_radius - carWidth;
-
-        // Draw right curve
-        g2.drawArc(upper_left_x_right, upper_left_y_right, 2*turn_radius, 2*turn_radius, 180, 90);
-
-        // Draw left curve 
-        g2.drawArc(upper_left_x_left, upper_left_y_left, 2*(turn_radius+carWidth), 2*(turn_radius+carWidth), 180, 90);
-
+        // If wheels didn't turn, draw straight lines
+        else {
+            g2.draw(new Line2D.Double(x_center-carWidth/2, y_center+carLength/2, x_center-carWidth/2, y_center+carLength*2));
+            g2.draw(new Line2D.Double(x_center+carWidth/2, y_center+carLength/2, x_center+carWidth/2, y_center+carLength*2));
+        }
+        
     }
 
     public static void main(String s[]) {
@@ -95,7 +104,7 @@ public class PathPrediction extends JApplet {
         f.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {System.exit(0);}
         });
-        JApplet applet = new PathPrediction(40,60,50);
+        JApplet applet = new PathPrediction(40,60,0);
 
         f.getContentPane().add("Center", applet);
         applet.init();
