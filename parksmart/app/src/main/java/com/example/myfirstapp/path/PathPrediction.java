@@ -80,15 +80,17 @@ public class PathPrediction extends JApplet {
     
             int upper_left_x_right = turn_center_x - turn_radius + carWidth/2;
             int upper_left_y_right = turn_center_y - turn_radius;
-    
+            int arcAngle_right = (int) Math.round(2*carLength/(2*turn_radius*Math.PI)*360);
+
             int upper_left_x_left = turn_center_x - turn_radius - carWidth/2;
             int upper_left_y_left = turn_center_y - turn_radius - carWidth;
-    
+            int arcAngle_left = (int) Math.round(2*carLength/(2*(turn_radius+carWidth)*Math.PI)*360);
+
             // Draw right curve
-            g2.drawArc(upper_left_x_right, upper_left_y_right, 2*turn_radius, 2*turn_radius, 180, 90);
+            g2.drawArc(upper_left_x_right, upper_left_y_right, 2*turn_radius, 2*turn_radius, 180, arcAngle_right);
     
             // Draw left curve 
-            g2.drawArc(upper_left_x_left, upper_left_y_left, 2*(turn_radius+carWidth), 2*(turn_radius+carWidth), 180, 90);
+            g2.drawArc(upper_left_x_left, upper_left_y_left, 2*(turn_radius+carWidth), 2*(turn_radius+carWidth), 180, arcAngle_left);
         }
 
         // If wheels didn't turn, draw straight lines
@@ -104,7 +106,7 @@ public class PathPrediction extends JApplet {
         f.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {System.exit(0);}
         });
-        JApplet applet = new PathPrediction(40,60,0);
+        JApplet applet = new PathPrediction(40,60,20);
 
         f.getContentPane().add("Center", applet);
         applet.init();
