@@ -70,16 +70,6 @@ public class PathPrediction extends JApplet {
         // Draw outline on the left side of based on (x,y) of a sensor and its distance feedback 
         g2.setStroke(dashed);
         g2.setPaint(path);
-
-        // Path2D leftCurve = new Path2D.Double();
-        // leftCurve.moveTo(x_center-carWidth/2, y_center+carLength/2);
-        // leftCurve.curveTo(x_center-carWidth/2, y_center+carLength/2, x_center-carWidth/2+10, y_center+carLength/2+20, x_center-carWidth/2+20, y_center+carLength);
-        // g2.draw(leftCurve);
-
-        // Path2D rightCurve = new Path2D.Double();
-        // rightCurve.moveTo(x_center+carWidth/2, y_center+carLength/2);
-        // rightCurve.curveTo(x_center+carWidth/2, y_center+carLength/2, x_center, y_center+carLength/2 - 20, x_center+carWidth/2, y_center+carLength/2);
-        // g2.draw(rightCurve);
         
         int tan = (int) Math.round(Math.tan(Math.toRadians(wheelAngle)));
         int turn_radius = carLength/tan-carWidth/2;
@@ -91,8 +81,6 @@ public class PathPrediction extends JApplet {
 
         int upper_left_x_left = turn_center_x - turn_radius - carWidth/2;
         int upper_left_y_left = turn_center_y - turn_radius - carWidth;
-        // System.out.print(tan);
-        // System.out.print(turn_radius);
 
         // Draw right curve
         g2.drawArc(upper_left_x_right, upper_left_y_right, 2*turn_radius, 2*turn_radius, 180, 90);
@@ -100,8 +88,6 @@ public class PathPrediction extends JApplet {
         // Draw left curve 
         g2.drawArc(upper_left_x_left, upper_left_y_left, 2*(turn_radius+carWidth), 2*(turn_radius+carWidth), 180, 90);
 
-
-        // g2.draw(new Line2D.Double());
     }
 
     public static void main(String s[]) {
