@@ -1,13 +1,16 @@
 package com.example.myfirstapp.sensors;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public interface SensorAdaptor {
   /**
     Get Distance in Centimeters
   */
-  public int getDistance();
+  public int getVal(int index);
 
-  public int getX();
+  public List<SensorCoordinate> getSensorCoordinates();
 
-  public int getY();
+  public void refreshDistance();
 
 }

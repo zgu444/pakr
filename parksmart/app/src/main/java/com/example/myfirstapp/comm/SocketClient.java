@@ -76,6 +76,24 @@ public class SocketClient{
         }
     }
 
+    public String readLine(){
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String str;
+            while ((str = bufferedReader.readLine()) != null)
+            {
+                sb.append(str + "\n");
+            }
+
+            // close the reader, and return the results as a String
+
+            bufferedReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
+    }
     public String writeToAndReadFromSocket(String writeTo) 
     {
         try
