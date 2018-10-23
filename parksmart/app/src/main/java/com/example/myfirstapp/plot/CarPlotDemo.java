@@ -5,8 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -42,8 +40,8 @@ public class CarPlotDemo extends View {
 
     private ArrayList<SensorAdaptor> left_sensors;
 
-    private void arcTo(Path pth, int a, int b, int c, int d, int e, int f){
-        pth.arcTo((float)a,(float)b,(float)c,(float)d,(float)e,(float)f, false);
+    private void curveTo(Path pth, int a, int b, int c, int d, int e, int f){
+        pth.cubicTo((float)a,(float)b,(float)c,(float)d,(float)e,(float)f);
     }
 
     @Override protected void onDraw(Canvas canvas) {
@@ -59,8 +57,8 @@ public class CarPlotDemo extends View {
         int gridWidth = width / 6;
         int gridHeight = height / 2;
 
-        int x_center = width/2;
-        int y_center = height/2;
+        int x_center = width / 2;
+        int y_center = height / 2;
 
         paint.setStyle(Paint.Style.STROKE);
 
@@ -73,7 +71,6 @@ public class CarPlotDemo extends View {
 //        canvas.drawRoundRect(r2, (float)0.0, (float)0.0, paint);
 
         paint.setColor(fg);
-
         int rectWidth = 79;
         int rectHeight = 127;
 
@@ -81,16 +78,15 @@ public class CarPlotDemo extends View {
         // draw the car
         Path pfront = new Path();
         pfront.moveTo(x_center-rectWidth/2, y_center-rectHeight/2);
-        pfront.arcTo((float)x_center-rectWidth/2, (float)y_center-rectHeight/2,
-                (float)x_center, (float)y_center-rectHeight/2 - 20,
-                (float)x_center+rectWidth/2, (float)y_center-rectHeight/2,
-                false);
+        curveTo(pfront, x_center-rectWidth/2, y_center-rectHeight/2,
+                x_center, y_center-rectHeight/2 - 20,
+                x_center+rectWidth/2, y_center-rectHeight/2);
         pfront.close();
         canvas.drawPath(pfront, paint);
 
         Path pback = new Path();
         pback.moveTo(x_center-rectWidth/2, y_center+rectHeight/2);
-        arcTo(pback,x_center-rectWidth/2, y_center+rectHeight/2, x_center, y_center+rectHeight/2 + 20, x_center+rectWidth/2, y_center+rectHeight/2);
+        curveTo(pback,x_center-rectWidth/2, y_center+rectHeight/2, x_center, y_center+rectHeight/2 + 20, x_center+rectWidth/2, y_center+rectHeight/2);
         pback.close();
         canvas.drawPath(pback, paint);
 
@@ -101,9 +97,11 @@ public class CarPlotDemo extends View {
         canvas.drawLine(x_center-rectWidth/2, y_center+rectHeight/2, x_center-rectWidth/2, y_center+rectHeight/2, paint);
 
         // Draw outline on the left side of based on (x,y) of a sensor and its distance feedback
+        paint.setColor(Color.BLUE);
+//        canvas.drawArc(x_center-rectWidth/2-40-40, y_center-rectHeight/2-40+10-40,
+//                x_center-rectWidth/2,y_center+rectHeight/2+10,
+//                173, 15, false, paint);
 
-        canvas.drawArc(x_center-rectWidth/2-40, y_center-rectHeight/2-40+10, 40*2,
-                40*2, 173, 15, false, paint);
         int x_arc = x_center-rectWidth/2;
         int y_arc1 = y_center-rectHeight/2+10;
         int y_arc2 = y_center-rectHeight/2+60;
@@ -124,13 +122,36 @@ public class CarPlotDemo extends View {
         int y_3_high = (int)(y_arc3 + dist3*(Math.cos(8)));
         int y_3_low = (int)(y_arc3 - dist3*(Math.cos(8)));
 
+        Path p1 = new Path();
+        p1.moveTo(x_2, y_2_high);
+        p1.arcTo(x_center-rectWidth/2-40-40, y_center-rectHeight/2-40+10-40,
+                x_center-rectWidth/2,y_center+rectHeight/2+10,
+                173, 15, false);
+        p1.close();
+        canvas.drawPath(p1,paint);
+
+        paint.setColor(Color.CYAN);
         canvas.drawLine(x_1, y_1_low, x_2, y_2_high, paint);
         canvas.drawLine(x_2, y_2_low, x_3, y_3_high, paint);
+//<<<<<<< HEAD
+        paint.setColor(red);
+//        canvas.drawArc(x_center-rectWidth/2-30-30, y_center-rectHeight/2-30+60-30,
+//                x_center-rectWidth/2,y_center+rectHeight/2+60,
+//                173, 15, false, paint);
+//        canvas.drawArc(x_center-rectWidth/2-50-50, y_center-rectHeight/2-50+120-50,
+//                x_center-rectWidth/2,y_center-rectHeight/2+120,
+//                173, 15,false, paint);
+
+        // for(int i = 0; i < left_sensors.size(); i++){
+        //     g2.drawArc(left_sensors.get(0)+dist, left_sensors);
+        // }
+//=======
         canvas.drawArc(x_center-rectWidth/2-30, y_center-rectHeight/2-30+60, 30*2,
                 30*2, 173, 15, false, paint);
         canvas.drawArc(x_center-rectWidth/2-50, y_center-rectHeight/2-50+120, 50*2,
                 50*2, 173, 15,false, paint);
 
+//>>>>>>> e274800ac6093fb8394d8d86f822f44cfaec871e
 
     }
 
