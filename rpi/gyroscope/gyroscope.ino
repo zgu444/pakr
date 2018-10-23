@@ -72,7 +72,7 @@ void getAngle(int Vx,int Vy,int Vz) {
 
   pitch = atan(x/sqrt((y*y) + (z*z)));
   roll = atan(y/sqrt((x*x) + (z*z)));
-  yaw = atan(z/sqrt(x*x) + (z*z));
+  yaw = atan(z/sqrt((x*x) + (z*z)));
 
   //convert radians into degrees
   pitch = pitch * (180.0/PI);
