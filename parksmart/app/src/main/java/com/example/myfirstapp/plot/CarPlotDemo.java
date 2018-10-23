@@ -10,11 +10,13 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.example.myfirstapp.sensors.RPISensorAdaptor;
 import com.example.myfirstapp.sensors.SensorAdaptor;
 
 import java.util.ArrayList;
 
 public class CarPlotDemo extends View {
+    private SensorAdaptor sensorAdaptor;
     public CarPlotDemo(Context context){
         super(context);
     }
@@ -27,7 +29,8 @@ public class CarPlotDemo extends View {
     @Override
     protected void onFinishInflate(){
         super.onFinishInflate();
-        left_sensors = new ArrayList();
+        sensorAdaptor = new RPISensorAdaptor();
+
     }
     final static int maxCharHeight = 15;
     final static int minFontSize = 6;
@@ -127,9 +130,7 @@ public class CarPlotDemo extends View {
                 30*2, 173, 15, false, paint);
         canvas.drawArc(x_center-rectWidth/2-50, y_center-rectHeight/2-50+120, 50*2,
                 50*2, 173, 15,false, paint);
-        // for(int i = 0; i < left_sensors.size(); i++){
-        //     g2.drawArc(left_sensors.get(0)+dist, left_sensors);
-        // }
+
 
     }
 
