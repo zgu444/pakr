@@ -9,7 +9,11 @@ public interface SensorAdaptor {
   */
   public int getVal(int index);
 
-  public List<SensorCoordinate> getSensorCoordinates();
+  public SensorCoordinate getSensorCoordinate(int index);
+
+  public void addSensorCoordinate(SensorCoordinate new_coord);
+
+  public int getSize();
 
   public void refreshDistance();
 
