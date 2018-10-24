@@ -76,7 +76,6 @@ public class CarPlotDemo extends View {
 
 
         // draw the car
-
         Path pfront = new Path();
         pfront.moveTo(x_center-rectWidth/2, y_center-rectHeight/2);
         curveTo(pfront, x_center-rectWidth/2, y_center-rectHeight/2,
@@ -93,6 +92,9 @@ public class CarPlotDemo extends View {
 
         canvas.drawLine(x_center-rectWidth/2, y_center-rectHeight/2, x_center-rectWidth/2, y_center+rectHeight/2, paint);
         canvas.drawLine(x_center+rectWidth/2, y_center-rectHeight/2, x_center+rectWidth/2, y_center+rectHeight/2, paint);
+
+        canvas.drawLine(x_center-rectWidth/2, y_center-rectHeight/2, x_center+rectWidth/2, y_center-rectHeight/2, paint);
+        canvas.drawLine(x_center-rectWidth/2, y_center+rectHeight/2, x_center-rectWidth/2, y_center+rectHeight/2, paint);
 
         // Draw outline on the left side of based on (x,y) of a sensor and its distance feedback
         paint.setColor(Color.BLUE);
