@@ -42,13 +42,21 @@
 
         </LinearLayout>
 
-        <VideoView
-            android:id="@+id/videoViewMain"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="40px"
             android:layout_weight="0.4"
             app:layout_constraintTop_toTopOf="parent"
-            tools:layout_marginTop="10dp" />
+            android:background="#000000"
+            tools:layout_marginTop="10dp"
+            >
+            <TextureView
+                android:id="@+id/textureVideoMain"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+        </RelativeLayout>
+
 
         <view xmlns:android="http://schemas.android.com/apk/res/android"
             class="com.example.myfirstapp.plot.CarPlotDemo"
