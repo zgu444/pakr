@@ -46,22 +46,21 @@ void loop(){
   getAngle(AcX,AcY,AcZ);
   
   //send the data out the serial port
-  Serial.print("Angle: ");
-  Serial.print("Pitch = "); Serial.print(pitch);
-  Serial.print(" | Roll = "); Serial.println(roll);
-  Serial.print(" | Yaw = "); Serial.println(yaw);
+//  Serial.print("Angle: ");
+//  Serial.print("Pitch = "); Serial.print(pitch);
+  Serial.print(" Roll = "); Serial.println(roll);
+//  Serial.print(" | Yaw = "); Serial.println(yaw);
   
-  Serial.print("Accelerometer: ");
-  Serial.print("X = "); Serial.print(AcX);
-  Serial.print(" | Y = "); Serial.print(AcY);
-  Serial.print(" | Z = "); Serial.println(AcZ);
+//  Serial.print("Accelerometer: ");
+//  Serial.print("X = "); Serial.print(AcX);
+//  Serial.print(" | Y = "); Serial.print(AcY);
+//  Serial.print(" | Z = "); Serial.println(AcZ);
   
-  Serial.print("Gyroscope: ");
-  Serial.print("X = "); Serial.print(GyX);
-  Serial.print(" | Y = "); Serial.print(GyY);
-  Serial.print(" | Z = "); Serial.println(GyZ);
-  Serial.println(" ");
-  delay(333);
+//  Serial.print("Gyroscope: ");
+//  Serial.print("X = "); Serial.print(GyX);
+//  Serial.print(" | Y = "); Serial.print(GyY);
+//  Serial.print(" | Z = "); Serial.println(GyZ);
+  delay(500);
 }
 
 //convert the accel data to pitch/roll
