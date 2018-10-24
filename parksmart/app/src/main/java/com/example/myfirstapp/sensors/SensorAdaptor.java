@@ -11,8 +11,6 @@ public interface SensorAdaptor {
 
   public SensorCoordinate getSensorCoordinate(int index);
 
-  public void addSensorCoordinate(SensorCoordinate new_coord);
-
   public int getSize();
 
   public void refreshDistance();

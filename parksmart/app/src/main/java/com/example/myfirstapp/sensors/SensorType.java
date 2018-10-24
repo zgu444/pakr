@@ -1,5 +1,5 @@
 package com.example.myfirstapp.sensors;
 
 public enum SensorType{
-    LEFT_ULTRA, RIGHT_ULTRA, GYRO
+    LEFT, RIGHT, LEFT_FRONT, RIGHT_FRONT, GYRO, BACK;
 }
