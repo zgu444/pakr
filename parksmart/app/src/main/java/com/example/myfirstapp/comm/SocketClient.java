@@ -89,10 +89,11 @@ public class SocketClient{
             // close the reader, and return the results as a String
 
             bufferedReader.close();
+            return sb.toString();
         } catch (IOException e) {
             e.printStackTrace();
+            return "";
         }
-        return sb.toString();
     }
     public String writeToAndReadFromSocket(String writeTo) 
     {

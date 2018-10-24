@@ -8,13 +8,13 @@ import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.example.myfirstapp.sensors.RPISensorAdaptor;
+//import com.example.myfirstapp.sensors.RPISensorAdaptor;
 import com.example.myfirstapp.sensors.SensorAdaptor;
 
 import java.util.ArrayList;
 
 public class CarPlotDemo extends View {
-    private SensorAdaptor sensorAdaptor;
+//    private SensorAdaptor sensorAdaptor;
     public CarPlotDemo(Context context){
         super(context);
     }
@@ -27,7 +27,7 @@ public class CarPlotDemo extends View {
     @Override
     protected void onFinishInflate(){
         super.onFinishInflate();
-        sensorAdaptor = new RPISensorAdaptor();
+//        sensorAdaptor = new RPISensorAdaptor();
 
     }
     final static int maxCharHeight = 15;

@@ -5,7 +5,7 @@ public class SensorCoordinate {
     public final int y_coord;
     public final SensorType sensorType;
 
-    public Coordinate(int x, int y, SensorType sensorType){
+    public SensorCoordinate(int x, int y, SensorType sensorType){
         x_coord = x;
         y_coord = y;
         this.sensorType = sensorType;
