@@ -263,7 +263,7 @@ public class CarPlotDemo extends View {
         // TODO: combine this section with the left/right side drawing
         // Testing values
         // Assume sensor_f1 is at the center of the left front
-        float angle_offset = (float) Math.toDegrees(Math.atan(7/37));
+        float angle_offset = (float) Math.toDegrees(Math.atan(37/7));
 
         float sensor_f1_x = x_center-rectWidth/4;
         float sensor_f1_y = y_center-rectHeight/2-7;
@@ -290,11 +290,11 @@ public class CarPlotDemo extends View {
             float rect_bottom = sensor_y+sensor_distance;
 
             // left front sensor
-            float start_angle = (float) -(angle_offset+82.5);
+            float start_angle = (float) -((90-angle_offset)+82.5);
             float sweep_angle = -15;
 
             // right front sensor
-//            float start_angle = (float) -(angle_offset+82.5);
+//            float start_angle = (float) -(82.5-(90-angle_offset));
 //            float sweep_angle = -15;
 
             RectF rectF = new RectF(rect_left, rect_top, rect_right, rect_bottom);
@@ -305,10 +305,13 @@ public class CarPlotDemo extends View {
             float triangle_bottom = triangle_top*(float)Math.cos(Math.toRadians(half_angle));
             float triangle_side = triangle_top*(float)Math.sin(Math.toRadians(half_angle));
 
-            // different from left/right sensors
+            // different for left/right front sensors
+
             // find the coordinates of start of the curve (left)
-            float curve_start_x = sensor_x - triangle_side;
-            float curve_start_y = sensor_y + triangle_bottom;
+            float curve_start_x = sensor_x;
+            float curve_start_y = sensor_y - triangle_bottom;
+            canvas.drawLine(curve_start_x, curve_start_y, 100, 100, paint);
+
 
             // Find the coordinates of the end of the curve (right)
             float curve_end_x = sensor_x + triangle_side;
