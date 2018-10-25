@@ -8,8 +8,7 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
-
-
+import com.example.myfirstapp.plot.CarConstants;
 import java.util.ArrayList;
 
 public class CarPlotDemo extends View {
@@ -25,13 +24,7 @@ public class CarPlotDemo extends View {
     @Override
     protected void onFinishInflate(){
         super.onFinishInflate();
-
     }
-
-    final static int bg = Color.WHITE;
-    final static int fg = Color.BLACK;
-    final static int red = Color.RED;
-
 
     private void curveTo(Path pth, int a, int b, int c, int d, int e, int f){
         pth.cubicTo((float)a,(float)b,(float)c,(float)d,(float)e,(float)f);
@@ -39,7 +32,6 @@ public class CarPlotDemo extends View {
 
     @Override protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        // custom drawing code here
         Paint paint = new Paint();
 
         int canvasWidth = getWidth();
@@ -48,13 +40,11 @@ public class CarPlotDemo extends View {
         int y_center = canvasHeight / 2;
 
         paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(fg);
+        paint.setColor(Color.BLACK);
 
-        // 72, 125, and 7 are in cm
-        // real measurements of the testing vehicle
-        int rectWidth = 74*2;
-        int rectHeight = 125*2;
-        int front = 7*2;
+        int rectWidth = CarConstants.CAR_WIDTH*2;
+        int rectHeight = CarConstants.CAR_LENGTH*2;
+        int front = CarConstants.POINTY_LENGTH*2;
 
         // draw the car
         // Draw the front and back curves
@@ -311,7 +301,6 @@ public class CarPlotDemo extends View {
             float curve_start_x = sensor_x;
             float curve_start_y = sensor_y - triangle_bottom;
             canvas.drawLine(curve_start_x, curve_start_y, 100, 100, paint);
-
 
             // Find the coordinates of the end of the curve (right)
             float curve_end_x = sensor_x + triangle_side;
