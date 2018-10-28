@@ -1,27 +1,24 @@
 package com.example.myfirstapp.sensors;
 
 import android.annotation.SuppressLint;
-import android.hardware.Sensor;
 import android.os.AsyncTask;
+import android.util.Log;
+import android.view.View;
 
 import com.example.myfirstapp.comm.SocketClient;
 import com.example.myfirstapp.plot.CarConstants;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
+
+import java.util.Arrays;
 
 @SuppressLint("NewApi")
-public class RPISensorAdaptor extends AsyncTask<Void, Void, Void> implements SensorAdaptor {
+public class RPISensorAdaptor extends AsyncTask<View, Void, Void> implements SensorAdaptor {
     public static final int PORT_NUMBER = 18500;
     private static RPISensorAdaptor my_adaptor;
     public static RPISensorAdaptor get_rpiadaptor(){
         if (my_adaptor == null){
             my_adaptor = new RPISensorAdaptor(10);
+            my_adaptor.populate_rpiadaptor(0,0);
         }
         return my_adaptor;
     }
@@ -129,21 +126,28 @@ public class RPISensorAdaptor extends AsyncTask<Void, Void, Void> implements Sen
     }
 
     private void parseReadings(String data){
+        if (data == null)
+            return;
         String[] datas = data.split(", ");
+        Log.d("parsed data", Arrays.asList(datas).toString());
         if (datas.length != size)
             return;
         for (int i = 0; i < size; i++) {
-            sensors[i].setVal(Float.valueOf(datas[i]));
+            if (datas[i].length()>0)
+                sensors[i].setVal(Float.valueOf(datas[i]));
         }
     }
 
     @Override
-    protected Void doInBackground(Void... voids) {
+    protected Void doInBackground(View... views) {
         socket_client = new SocketClient(PORT_NUMBER);
         while(!this.isCancelled()){
             try {
-                Thread.sleep(200);
+                Thread.sleep(100);
                 refreshDistance();
+                for (View view : views) {
+                    view.invalidate();
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

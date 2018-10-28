@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import com.example.myfirstapp.plot.CarConstants;
 import com.example.myfirstapp.sensors.RPISensorAdaptor;

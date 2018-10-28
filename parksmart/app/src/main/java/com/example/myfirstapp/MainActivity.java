@@ -90,11 +90,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        View carPlot= findViewById(R.id.carPlot);
+        View carPlot= findViewById(R.id.carPlot);
 
 //        carPlot.setBackgroundDrawable();
         my_rpi = RPISensorAdaptor.get_rpiadaptor();
-        my_rpi.execute();
+        my_rpi.execute(carPlot);
+
     }
 
 }

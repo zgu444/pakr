@@ -52,14 +52,6 @@ public class VideoOverlayDemo extends View {
 
         // If wheel turns, draw arcs
         if (wheelAngle != 10) {
-
-//            Path pback = new Path();
-//
-//            pback.moveTo(x_center-width/2, y_center+height/2);
-//            curveTo(pback,x_center-width/2, y_center+height/2, x_center,
-//                    y_center+height/2 + 20, x_center+width/2, y_center+height/2);
-//            canvas.drawPath(pback, paint);
-
             double tan = Math.tan(Math.toRadians(wheelAngle));
             float turn_radius = Math.round(CarConstants.CAR_LENGTH/tan-width/2);
             float turn_center_x = x_center+turn_radius;
@@ -72,6 +64,19 @@ public class VideoOverlayDemo extends View {
             float upper_left_x_left = turn_center_x - turn_radius -  width/2;
             float upper_left_y_left = turn_center_y - turn_radius - width;
             float arcAngle_left = Math.round(2*CarConstants.CAR_LENGTH/(2*(turn_radius+ width)*Math.PI)*360);
+
+//            Path pback = new Path();
+//
+//            // starting point, left bottom corner of screen
+//            pback.moveTo(height, 0);
+//
+//            float total_angle = wheelAngle + ANGLE_OFFSET;
+//            float x_offset = height*(float) Math.tan(Math.toRadians(total_angle));
+//
+//            curveTo(pback,height, 0, x_offset/2,
+//                    y_center+height/2 + 20, x_center+width/2, y_center+height/2);
+//            canvas.drawPath(pback, paint);
+
 
             // Draw right curve
             RectF rect_Right = new RectF(upper_left_x_right, upper_left_y_right, upper_left_x_right+2*turn_radius, upper_left_y_right+2*turn_radius);

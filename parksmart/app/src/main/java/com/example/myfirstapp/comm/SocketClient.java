@@ -16,11 +16,7 @@ import java.net.SocketTimeoutException;
 
 public class SocketClient{
     private Socket socket;
-//    public static void main(String args[]) throws Exception{
-//        SocketClient my_client = new SocketClient(18500);
-//        System.out.println(my_client.writeToAndReadFromSocket("1"));
-//        my_client.socket.close();
-//    }
+    private BufferedReader bufferedReader;
 
     public SocketClient(int port){
         String server_name = "PARKRPI.WV.CC.CMU.EDU";
@@ -31,7 +27,7 @@ public class SocketClient{
             
             // write-to, and read-from the socket.
             // in this case just write a simple command to a web server.
-            //String result = writeToAndReadFromSocket(socket, "GET /\n\n");
+//            String result = writeToAndReadFromSocket(socket, "GET /\n\n");
             
             // print out the result we got back from the server
             //System.out.println(result);
@@ -76,46 +72,23 @@ public class SocketClient{
         }
     }
 
-    public String readLine(){
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String str;
-            while ((str = bufferedReader.readLine()) != null)
-            {
-                sb.append(str + "\n");
-            }
-
-            // close the reader, and return the results as a String
-
-            bufferedReader.close();
-            return sb.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
     public String writeToAndReadFromSocket(String writeTo) 
     {
         try
         {
             // write text to the socket
-            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            bufferedWriter.write(writeTo);
-            bufferedWriter.flush();
+//            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+//            bufferedWriter.write(writeTo);
+//            bufferedWriter.flush();
             
             // read text from the socket
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String str;
-            while ((str = bufferedReader.readLine()) != null)
-            {
-                sb.append(str + "\n");
-            }
+            if(bufferedReader == null)
+                bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            // close the reader, and return the results as a String
-            bufferedReader.close();
-            return sb.toString();
+            String str;
+            str = bufferedReader.readLine();
+
+            return str;
         }
         catch (IOException e)
         {
