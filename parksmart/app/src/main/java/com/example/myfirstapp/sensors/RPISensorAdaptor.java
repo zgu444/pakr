@@ -18,6 +18,10 @@ public class RPISensorAdaptor extends AsyncTask<Void, Void, Void> implements Sen
     public static final int PORT_NUMBER = 18500;
     private static RPISensorAdaptor my_adaptor;
     public static RPISensorAdaptor get_rpiadaptor(){
+        if (my_adaptor == null){
+            my_adaptor = new RPISensorAdaptor(10);
+            my_adaptor.populate_rpiadaptor(0, 0);
+        }
         return my_adaptor;
     }
     public static RPISensorAdaptor get_rpiadaptor(int center_x, int center_y){
@@ -31,62 +35,65 @@ public class RPISensorAdaptor extends AsyncTask<Void, Void, Void> implements Sen
         }
         return my_adaptor;
     }
-    public static RPISensorAdaptor create_rpiadaptor(int center_x, int center_y){
-        RPISensorAdaptor my_rpi = new RPISensorAdaptor(10);
-        my_rpi.x_center = center_x;
-        my_rpi.y_center = center_y;
+    private void populate_rpiadaptor(int center_x, int center_y){
+        this.x_center = center_x;
+        this.y_center = center_y;
         // 0
-        my_rpi.addSensorCoordinate(new SensorCoordinate(
+        addSensorCoordinate(new SensorCoordinate(
                 center_x + CarConstants.FRONT_WHEEL_LEFT_X,
                 center_y + CarConstants.FRONT_WHEEL_LEFT_Y,
                 SensorType.LEFT), 0);
         // 1
-        my_rpi.addSensorCoordinate(new SensorCoordinate(
+        addSensorCoordinate(new SensorCoordinate(
                 center_x + CarConstants.FRONT_WHEEL_RIGHT_X,
                 center_y + CarConstants.FRONT_WHEEL_RIGHT_Y,
                 SensorType.RIGHT), 1);
         // 2
-        my_rpi.addSensorCoordinate(new SensorCoordinate(
+        addSensorCoordinate(new SensorCoordinate(
                 center_x + CarConstants.FRONT_LEFT_X,
                 center_y + CarConstants.FRONT_LEFT_Y,
                 SensorType.LEFT_FRONT), 2);
         // 3
-        my_rpi.addSensorCoordinate(new SensorCoordinate(
+        addSensorCoordinate(new SensorCoordinate(
                 center_x + CarConstants.FRONT_RIGHT_X,
                 center_y + CarConstants.FRONT_RIGHT_Y,
                 SensorType.RIGHT_FRONT), 3);
         // 4
-        my_rpi.addSensorCoordinate(new SensorCoordinate(
+        addSensorCoordinate(new SensorCoordinate(
                 center_x,
                 center_y,
                 SensorType.GYRO), 4);
         // 5
-        my_rpi.addSensorCoordinate(new SensorCoordinate(
+        addSensorCoordinate(new SensorCoordinate(
                 center_x + CarConstants.MID_LEFT_X,
                 center_y + CarConstants.MID_LEFT_Y,
                 SensorType.LEFT), 5);
         // 6
-        my_rpi.addSensorCoordinate(new SensorCoordinate(
+        addSensorCoordinate(new SensorCoordinate(
                 center_x + CarConstants.MID_RIGHT_X,
                 center_y + CarConstants.MID_RIGHT_Y,
                 SensorType.RIGHT), 6);
         // 7
-        my_rpi.addSensorCoordinate(new SensorCoordinate(
+        addSensorCoordinate(new SensorCoordinate(
                 center_x + CarConstants.BACK_WHEEL_LEFT_X,
                 center_y + CarConstants.BACK_WHEEL_LEFT_Y,
                 SensorType.LEFT), 7);
         // 8
-        my_rpi.addSensorCoordinate(new SensorCoordinate(
+        addSensorCoordinate(new SensorCoordinate(
                 center_x + CarConstants.BACK_WHEEL_RIGHT_X,
                 center_y + CarConstants.BACK_WHEEL_RIGHT_Y,
                 SensorType.RIGHT), 8);
         // 9
-        my_rpi.addSensorCoordinate(new SensorCoordinate(
+        addSensorCoordinate(new SensorCoordinate(
                 center_x + CarConstants.BACK_X,
                 center_y + CarConstants.BACK_Y,
                 SensorType.BACK), 9);
-        return my_rpi;
+    }
 
+    private static RPISensorAdaptor create_rpiadaptor(int center_x, int center_y){
+        RPISensorAdaptor my_rpi = new RPISensorAdaptor(10);
+        my_rpi.populate_rpiadaptor(center_x, center_y);
+        return my_rpi;
     }
 
     private final SensorCoordinate[] sensors;
@@ -116,7 +123,7 @@ public class RPISensorAdaptor extends AsyncTask<Void, Void, Void> implements Sen
     }
 
 
-    public void refreshDistance(){
+    public synchronized void refreshDistance(){
         String data = socket_client.writeToAndReadFromSocket("0");
         parseReadings(data);
     }
