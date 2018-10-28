@@ -9,22 +9,64 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 import com.example.myfirstapp.plot.CarConstants;
+import com.example.myfirstapp.sensors.RPISensorAdaptor;
+import com.example.myfirstapp.sensors.SensorAdaptor;
+import com.example.myfirstapp.sensors.SensorCoordinate;
+import com.example.myfirstapp.sensors.SensorType;
+
 import java.util.ArrayList;
 
 public class CarPlotDemo extends View {
     public CarPlotDemo(Context context){
         super(context);
+        init();
     }
     public CarPlotDemo(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
     public CarPlotDemo(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init(){
+        x_center = getWidth()/2;
+        y_center = getHeight()/2;
+        myAdaptor = RPISensorAdaptor.get_rpiadaptor(x_center, y_center);
+        SensorCoordinate[] coordinates = myAdaptor.getSensors();
+        left_sensors = new ArrayList<>();
+        front_sensors = new ArrayList<>();
+        right_sensors = new ArrayList<>();
+        back_sensor = new ArrayList<>();
+        for (SensorCoordinate coord : coordinates) {
+            switch (coord.sensorType){
+                case LEFT_FRONT:
+                case RIGHT_FRONT:
+                    front_sensors.add(coord);
+                    break;
+                case BACK:
+                    back_sensor.add(coord);
+                    break;
+                case LEFT:
+                    left_sensors.add(coord);
+                    break;
+                case RIGHT:
+                    right_sensors.add(coord);
+                    break;
+                case GYRO:
+                    break;
+            }
+
+        }
     }
     @Override
     protected void onFinishInflate(){
         super.onFinishInflate();
     }
+    private SensorAdaptor myAdaptor;
+    private ArrayList<SensorCoordinate> left_sensors, front_sensors, right_sensors, back_sensor;
+    private int x_center, y_center;
 
     private void curveTo(Path pth, int a, int b, int c, int d, int e, int f){
         pth.cubicTo((float)a,(float)b,(float)c,(float)d,(float)e,(float)f);
@@ -36,8 +78,6 @@ public class CarPlotDemo extends View {
 
         int canvasWidth = getWidth();
         int canvasHeight = getHeight();
-        int x_center = canvasWidth / 2;
-        int y_center = canvasHeight / 2;
 
         paint.setStyle(Paint.Style.STROKE);
         paint.setColor(Color.BLACK);
