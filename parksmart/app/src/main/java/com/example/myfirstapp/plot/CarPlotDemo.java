@@ -375,8 +375,8 @@ public class CarPlotDemo extends View {
 
             // for LEFT front sensor
             float triangle_top = sensor_distance*(float)Math.cos(Math.toRadians(half_angle));
-            
-//            float straight_angle = (float) 82.5+(90-angle_offset)-90;
+
+//            float straight_angle = (float) -(start_angle)-90;
 //            float opp = triangle_top*(float)Math.sin(Math.toRadians(straight_angle));
 //            float neighbor = triangle_top*(float)Math.cos(Math.toRadians(straight_angle));
 //
@@ -386,7 +386,7 @@ public class CarPlotDemo extends View {
 //            canvas.drawLine(curve_end_x, curve_end_y, 100, 100, paint);
 //
 //            // find the coordinates of start of the curve (left)
-//            float side_angle = (float) (180-15-(90-angle_offset)-82.5);
+//            float side_angle = (float) (180-15+start_angle);
 //            float left = triangle_top*(float) Math.sin(Math.toRadians((side_angle)));
 //            float bottom = triangle_top*(float) Math.cos(Math.toRadians((side_angle)));
 //
