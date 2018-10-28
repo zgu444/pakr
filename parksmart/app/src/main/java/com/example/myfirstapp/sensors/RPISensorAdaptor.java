@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressLint("NewApi")
 public class RPISensorAdaptor extends AsyncTask<Void, Void, Void> implements SensorAdaptor {
@@ -139,7 +141,7 @@ public class RPISensorAdaptor extends AsyncTask<Void, Void, Void> implements Sen
 
     @Override
     protected Void doInBackground(Void... voids) {
-        while(true){
+        while(!this.isCancelled()){
             try {
                 Thread.sleep(200);
                 refreshDistance();
@@ -147,6 +149,7 @@ public class RPISensorAdaptor extends AsyncTask<Void, Void, Void> implements Sen
                 e.printStackTrace();
             }
         }
+        return null;
     }
 
 }

@@ -22,12 +22,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.myfirstapp.sensors.RPISensorAdaptor;
 
 public class MainActivity extends AppCompatActivity {
     public static final String RTSP_ADDR = "rtsp://PARKRPI.WV.CC.CMU.EDU:8554/test";
     public static final String KEY = "79393674363536526D3430416E5A316270474A6970655A76636D63755A57467A65575268636E64706269356C59584E356347786865575679567778576F502B6C3430566863336C4559584A33615735555A57467453584E55614756435A584E30514449774D54686C59584E35";
     private Boolean playing = false;
     private Boolean URIinit = false;
+    private RPISensorAdaptor my_rpi;
     @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
 //        View carPlot= findViewById(R.id.carPlot);
 
 //        carPlot.setBackgroundDrawable();
+        my_rpi = RPISensorAdaptor.get_rpiadaptor();
+        my_rpi.execute();
     }
 
 }
