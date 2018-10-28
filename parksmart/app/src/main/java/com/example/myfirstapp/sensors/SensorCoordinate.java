@@ -1,12 +1,14 @@
 package com.example.myfirstapp.sensors;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class SensorCoordinate {
-    public final int x_coord;
-    public final int y_coord;
+    public float x_coord;
+    public float y_coord;
     public final SensorType sensorType;
     private float val;
 
-    public SensorCoordinate(int x, int y, SensorType sensorType){
+    public SensorCoordinate(float x, float y, SensorType sensorType){
         x_coord = x;
         y_coord = y;
         this.sensorType = sensorType;
