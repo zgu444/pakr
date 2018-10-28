@@ -19,15 +19,12 @@ import java.util.ArrayList;
 public class CarPlotDemo extends View {
     public CarPlotDemo(Context context){
         super(context);
-        init();
     }
     public CarPlotDemo(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
     }
     public CarPlotDemo(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
     }
 
     private void init(){
@@ -72,19 +69,22 @@ public class CarPlotDemo extends View {
         pth.cubicTo((float)a,(float)b,(float)c,(float)d,(float)e,(float)f);
     }
 
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        init();
+    }
+
     @Override protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         Paint paint = new Paint();
 
-        int canvasWidth = getWidth();
-        int canvasHeight = getHeight();
-
         paint.setStyle(Paint.Style.STROKE);
         paint.setColor(Color.BLACK);
 
-        int rectWidth = CarConstants.CAR_WIDTH*2;
-        int rectHeight = CarConstants.CAR_LENGTH*2;
-        int front = CarConstants.POINTY_LENGTH*2;
+        int rectWidth = CarConstants.CAR_WIDTH;
+        int rectHeight = CarConstants.CAR_LENGTH;
+        int front = CarConstants.POINTY_LENGTH;
 
         // draw the car
         // Draw the front and back curves
