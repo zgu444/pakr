@@ -84,6 +84,7 @@ public class CarPlotDemo extends View {
         Paint paint = new Paint();
 
         paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(5);
         paint.setColor(Color.BLACK);
 
         int rectWidth = CarConstants.CAR_WIDTH;
@@ -110,7 +111,7 @@ public class CarPlotDemo extends View {
                 x_center+rectWidth/2, y_center+rectHeight/2, paint);
 
         // Draw outline on the left side of based on (x,y) of a sensor and its distance feedback
-        paint.setColor(Color.BLUE);
+        paint.setColor(Color.RED);
 
         float left_end_x = -1;
         float left_end_y = -1;
