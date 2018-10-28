@@ -1,3 +1,7 @@
+// Transmits data from the 4 front ultrasonic sensors
+// and the 1 gyroscope to RPi
+// Numbering of sensors followed the hand-drawn diagram
+
 #include <NewPing.h>
 #include<Wire.h>
 #include <math.h>
@@ -71,13 +75,14 @@ void loop() {
   
   //get pitch/roll
   getAngle(AcX,AcY,AcZ);
-  
-  Serial.print(" Roll = "); Serial.println(roll);
-  char *readings = (char*)malloc((SENSOR_NUM+1) * sizeof(int));
-  sprintf(readings, "%u, %u, %u, %u", distance_0, distance_1, distance_2, distance_3);
-  Serial.println(readings);
 
-   
+//  Serial.println(roll);
+  signed int roll_d = (unsigned int) roll;
+  
+  // needs revision
+  char *readings = (char*)malloc((SENSOR_NUM+1) * sizeof(int));
+  sprintf(readings, "%u, %u, %u, %u, %i", distance_0, distance_1, distance_2, distance_3, roll_d);
+  Serial.println(readings);
 }
 
 //convert the accel data to pitch/roll
