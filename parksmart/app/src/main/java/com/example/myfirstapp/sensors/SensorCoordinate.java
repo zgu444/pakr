@@ -1,5 +1,7 @@
 package com.example.myfirstapp.sensors;
 
+import com.example.myfirstapp.plot.CarConstants;
+
 public class SensorCoordinate {
     public final int x_coord;
     public final int y_coord;
@@ -10,11 +12,11 @@ public class SensorCoordinate {
         x_coord = x;
         y_coord = y;
         this.sensorType = sensorType;
-        val = 30;
+        val = 100;
     }
 
     public synchronized float getVal(){
-        return val;
+        return val* CarConstants.RATIO;
     }
 
     public synchronized void setVal(float new_val){

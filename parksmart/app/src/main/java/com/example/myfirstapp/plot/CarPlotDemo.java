@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 public class CarPlotDemo extends View {
     private static final int SWEEP_ANGLE = 15;
+    private static final float ANGLE_OFFSET = (float) Math.toDegrees(Math.atan(37/7));
 
     public CarPlotDemo(Context context){
         super(context);
@@ -37,7 +38,8 @@ public class CarPlotDemo extends View {
         left_sensors = new ArrayList<>();
         front_sensors = new ArrayList<>();
         right_sensors = new ArrayList<>();
-        back_sensor = new ArrayList<>();
+        back_sensors = new ArrayList<>();
+
         for (SensorCoordinate coord : coordinates) {
             switch (coord.sensorType){
                 case LEFT_FRONT:
@@ -45,7 +47,7 @@ public class CarPlotDemo extends View {
                     front_sensors.add(coord);
                     break;
                 case BACK:
-                    back_sensor.add(coord);
+                    back_sensors.add(coord);
                     break;
                 case LEFT:
                     left_sensors.add(coord);
@@ -64,7 +66,7 @@ public class CarPlotDemo extends View {
         super.onFinishInflate();
     }
     private SensorAdaptor myAdaptor;
-    private ArrayList<SensorCoordinate> left_sensors, front_sensors, right_sensors, back_sensor;
+    private ArrayList<SensorCoordinate> left_sensors, front_sensors, right_sensors, back_sensors;
     private int x_center, y_center;
 
     private void curveTo(Path pth, int a, int b, int c, int d, int e, int f){
@@ -110,11 +112,8 @@ public class CarPlotDemo extends View {
         // Draw outline on the left side of based on (x,y) of a sensor and its distance feedback
         paint.setColor(Color.BLUE);
 
-        // This for loop draws the outline of obstacles
-        // based on the (x,y) values of sensors, placement of sensors (left, right, front, back)
-        // and distance feedback
-        float end_x = -1;
-        float end_y = -1;
+        float left_end_x = -1;
+        float left_end_y = -1;
 
         for (SensorCoordinate left_sensor : left_sensors) {
             float sensor_x = left_sensor.x_coord;
@@ -125,16 +124,7 @@ public class CarPlotDemo extends View {
             float rect_top = sensor_y-sensor_distance;
             float rect_right = sensor_x+sensor_distance;
             float rect_bottom = sensor_y+sensor_distance;
-
-            // TODO: different start_angle for left/right sensors
-
-            // if sensor on the left (not including the FRONT LEFT sensor)
             float start_angle = (float) 172.5;
-            // if sensor on the right (not including the FRONT RIGHT sensor)
-            // float start_angle = (float) -8.5;
-            // if back sensor
-            // float start_angle = (float) 82.5;
-
 
             RectF rectF = new RectF(rect_left, rect_top, rect_right, rect_bottom);
             canvas.drawArc (rectF, start_angle, SWEEP_ANGLE, false, paint);
@@ -144,185 +134,114 @@ public class CarPlotDemo extends View {
             float triangle_bottom = triangle_top*(float)Math.cos(Math.toRadians(half_angle));
             float triangle_side = triangle_top*(float)Math.sin(Math.toRadians(half_angle));
 
-            // TODO: diff calculation for start_x/end_x for left/right sensors
-
-            // if left sensor
             // Find the coordinates of the start of the curve (top)
             float curve_start_x = sensor_x - triangle_bottom;
             float curve_start_y = sensor_y - triangle_side;
-            if (end_x >= 0 && end_y >= 0) {
-                canvas.drawLine(end_x, end_y, curve_start_x, curve_start_y, paint);
+            if (left_end_x >= 0 && left_end_y >= 0) {
+                canvas.drawLine(left_end_x, left_end_y, curve_start_x, curve_start_y, paint);
             }
 
             // Find the coordinates of the end of the curve (bottom)
             float curve_end_x = sensor_x - triangle_bottom;
             float curve_end_y = sensor_y + triangle_side;
 
-
-            // if right sensor
-            // Find the coordinates of the start of the curve (top)
-//            float curve_start_x = sensor_x + triangle_bottom;
-//            float curve_start_y = sensor_y - triangle_side;
-
-            // Find the coordinates of the end of the curve (bottom)
-//            float curve_end_x = sensor_x + triangle_bottom;
-//            float curve_end_y = sensor_y + triangle_side;
-
-
-            // if back sensor
-            // find the coordinates of start of the curve (left)
-            // float curve_start_x = sensor_x - triangle_side;
-            // float curve_start_y = sensor_y + triangle_bottom;
-
-            // Find the coordinates of the end of the curve (right)
-            // float curve_end_x = sensor_x + triangle_side;
-            // float curve_end_y = sensor_y + triangle_bottom;
-
-
-            // This part adds the (x,y) coordinates of the start and end point of each curve to an array
-            // so that we can later connect the curves
-
-            end_x = curve_end_x;
-            end_y = curve_end_y;
+            left_end_x = curve_end_x;
+            left_end_y = curve_end_y;
         }
-/*
-        // TODO: remove whole section once integrated with sensor adaptor
+
+
         // Draw outline on the right side of based on (x,y) of a sensor and its distance feedback
-        paint.setColor(Color.BLUE);
 
-        // Testing values
-        // Assume sensor1 is at 1/4 of car length from the front on the left
-        float sensor1r_x = x_center+rectWidth/2;
-        float sensor1r_y = y_center-rectHeight/4;
-        float sensor1r_distance = 200;
+        float right_end_x = -1;
+        float right_end_y = -1;
 
-        // Assume sensor2 is at 3/4 of car length from the front on the left
-        float sensor2r_x = x_center+rectWidth/2;
-        float sensor2r_y = y_center+rectHeight/4;
-        float sensor2r_distance = 150;
-
-        float[] sensor1r = {sensor1r_x, sensor1r_y, sensor1r_distance};
-        float[] sensor2r = {sensor2r_x, sensor2r_y, sensor2r_distance};
-
-        float[][] sensorsr = {sensor1r, sensor2r};
-        float[][] curve_pointsr = new float[4][2];
-
-        for (int i=0; i<2; i++) {
-            float sensor_x = sensorsr[i][0];
-            float sensor_y = sensorsr[i][1];
-            float sensor_distance = sensorsr[i][2];
+        for (SensorCoordinate right_sensor : right_sensors) {
+            float sensor_x = right_sensor.x_coord;
+            float sensor_y = right_sensor.y_coord;
+            float sensor_distance = right_sensor.getVal();
 
             float rect_left = sensor_x-sensor_distance;
             float rect_top = sensor_y-sensor_distance;
             float rect_right = sensor_x+sensor_distance;
             float rect_bottom = sensor_y+sensor_distance;
 
-            // different from left
             float start_angle = (float) -8.5;
-            float sweep_angle = 15;
 
             RectF rectF = new RectF(rect_left, rect_top, rect_right, rect_bottom);
-            canvas.drawArc (rectF, start_angle, sweep_angle, false, paint);
+            canvas.drawArc (rectF, start_angle, SWEEP_ANGLE, false, paint);
 
-            float half_angle = sweep_angle/2;
+            float half_angle = SWEEP_ANGLE/2;
             float triangle_top = sensor_distance*(float)Math.cos(Math.toRadians(half_angle));
             float triangle_bottom = triangle_top*(float)Math.cos(Math.toRadians(half_angle));
             float triangle_side = triangle_top*(float)Math.sin(Math.toRadians(half_angle));
 
-            // different from left sensors
             // Find the coordinates of the start of the curve (top)
             float curve_start_x = sensor_x + triangle_bottom;
             float curve_start_y = sensor_y - triangle_side;
+
+            if (right_end_x >= 0 && right_end_y >= 0) {
+                canvas.drawLine(right_end_x, right_end_y, curve_start_x, curve_start_y, paint);
+            }
 
             // Find the coordinates of the end of the curve (bottom)
             float curve_end_x = sensor_x + triangle_bottom;
             float curve_end_y = sensor_y + triangle_side;
 
-            curve_pointsr[i*2][0] = curve_start_x;
-            curve_pointsr[i*2][1] = curve_start_y;
-            curve_pointsr[i*2+1][0] = curve_end_x;
-            curve_pointsr[i*2+1][1] = curve_end_y;
-
+            right_end_x = curve_end_x;
+            right_end_y = curve_end_y;
         }
 
-        for (int i=1; i<2; i++) {
-            float start_x = curve_pointsr[i][0];
-            float start_y = curve_pointsr[i][1];
-            float end_x = curve_pointsr[i+1][0];
-            float end_y = curve_pointsr[i+1][1];
 
-            canvas.drawLine(start_x, start_y, end_x, end_y, paint);
-        }
+        // Draw outline on the back of based on (x,y) of a sensor and its distance feedback
 
-        // Draw outline on the BACK based on (x,y) of a sensor and its distance feedback
-        paint.setColor(Color.BLUE);
+        float back_end_x = -1;
+        float back_end_y = -1;
 
-        // TODO: combine this section with the left/right side drawing
-        // Testing values
-        // Assume sensorb is at the center of the back
-        float sensorb_x = x_center;
-        float sensorb_y = y_center+rectHeight/2;
-        float sensorb_distance = 200;
-        float[] sensorb = {sensorb_x, sensorb_y, sensorb_distance};
-
-        float[][] sensorsb = {sensorb};
-
-        for (int i=0; i<1; i++) {
-            float sensor_x = sensorsb[i][0];
-            float sensor_y = sensorsb[i][1];
-            float sensor_distance = sensorsb[i][2];
+        for (SensorCoordinate back_sensor : back_sensors) {
+            float sensor_x = back_sensor.x_coord;
+            float sensor_y = back_sensor.y_coord;
+            float sensor_distance = back_sensor.getVal();
 
             float rect_left = sensor_x-sensor_distance;
             float rect_top = sensor_y-sensor_distance;
             float rect_right = sensor_x+sensor_distance;
             float rect_bottom = sensor_y+sensor_distance;
 
-            // different from left/right
             float start_angle = (float) 82.5;
-            float sweep_angle = 15;
 
             RectF rectF = new RectF(rect_left, rect_top, rect_right, rect_bottom);
-            canvas.drawArc (rectF, start_angle, sweep_angle, false, paint);
+            canvas.drawArc (rectF, start_angle, SWEEP_ANGLE, false, paint);
 
-            float half_angle = sweep_angle/2;
+            float half_angle = SWEEP_ANGLE/2;
             float triangle_top = sensor_distance*(float)Math.cos(Math.toRadians(half_angle));
             float triangle_bottom = triangle_top*(float)Math.cos(Math.toRadians(half_angle));
             float triangle_side = triangle_top*(float)Math.sin(Math.toRadians(half_angle));
 
-            // different from left/right sensors
             // find the coordinates of start of the curve (left)
-            float curve_start_x = sensor_x - triangle_side;
-            float curve_start_y = sensor_y + triangle_bottom;
+             float curve_start_x = sensor_x - triangle_side;
+             float curve_start_y = sensor_y + triangle_bottom;
+
+//            if (back_end_x >= 0 && back_end_y >= 0) {
+//                canvas.drawLine(back_end_x, back_end_y, curve_start_x, curve_start_y, paint);
+//            }
 
             // Find the coordinates of the end of the curve (right)
-            float curve_end_x = sensor_x + triangle_side;
-            float curve_end_y = sensor_y + triangle_bottom;
+             float curve_end_x = sensor_x + triangle_side;
+             float curve_end_y = sensor_y + triangle_bottom;
+
+            back_end_x = curve_end_x;
+            back_end_y = curve_end_y;
         }
 
+        // Draw outline on the front of based on (x,y) of a sensor and its distance feedback
 
-        // TODO: combine this section with the left/right side drawing
-        // Testing values
-        // Assume sensor_f1 is at the center of the left front
-        float angle_offset = (float) Math.toDegrees(Math.atan(37/7));
+        float front_end_x = -1;
+        float front_end_y = -1;
 
-        float sensor_f1_x = x_center-rectWidth/4;
-        float sensor_f1_y = y_center-rectHeight/2-7;
-        float sensor_f1_distance = 200;
-
-        float[] sensor_f1 = {sensor_f1_x, sensor_f1_y, sensor_f1_distance};
-
-        // Assume sensor_f2 is at the center of the right front
-        float sensor_f2_x = x_center+rectWidth/4;
-        float sensor_f2_y = y_center-rectHeight/2-7;
-        float sensor_f2_distance = 200;
-        float[] sensor_f2 = {sensor_f2_x, sensor_f2_y, sensor_f2_distance};
-
-        float[][] sensors_front = {sensor_f1, sensor_f2};
-
-        for (int i=1; i<2; i++) {
-            float sensor_x = sensors_front[i][0];
-            float sensor_y = sensors_front[i][1];
-            float sensor_distance = sensors_front[i][2];
+        for (SensorCoordinate front_sensor : front_sensors) {
+            float sensor_x = front_sensor.x_coord;
+            float sensor_y = front_sensor.y_coord;
+            float sensor_distance = front_sensor.getVal();
 
             float rect_left = sensor_x-sensor_distance;
             float rect_top = sensor_y-sensor_distance;
@@ -330,65 +249,61 @@ public class CarPlotDemo extends View {
             float rect_bottom = sensor_y+sensor_distance;
 
             // left front sensor
-//            float start_angle = (float) -((90-angle_offset)+82.5);
-//            float sweep_angle = -15;
+            float start_angle = (float) -((90-ANGLE_OFFSET)+82.5) ;
 
             // right front sensor
-            float start_angle = (float) -(82.5-(90-angle_offset));
-            float sweep_angle = -15;
+            if (front_sensor.sensorType == SensorType.RIGHT_FRONT) {
+                start_angle = (float) -(82.5-(90-ANGLE_OFFSET));
+            }
 
             RectF rectF = new RectF(rect_left, rect_top, rect_right, rect_bottom);
-            canvas.drawArc (rectF, start_angle, sweep_angle, false, paint);
+            canvas.drawArc (rectF, start_angle, -SWEEP_ANGLE, false, paint);
 
-            float half_angle = sweep_angle/2;
-
-            // NOTE: for finding start and end point of curve
-
-            // for LEFT front sensor
+            float half_angle = SWEEP_ANGLE/2;
             float triangle_top = sensor_distance*(float)Math.cos(Math.toRadians(half_angle));
 
-//            float straight_angle = (float) -(start_angle)-90;
-//            float opp = triangle_top*(float)Math.sin(Math.toRadians(straight_angle));
-//            float neighbor = triangle_top*(float)Math.cos(Math.toRadians(straight_angle));
-//
-//            // Find the coordinates of the end of the curve (right)
-//            float curve_end_x = sensor_x - opp;
-//            float curve_end_y = sensor_y - neighbor;
-//            canvas.drawLine(curve_end_x, curve_end_y, 100, 100, paint);
-//
-//            // find the coordinates of start of the curve (left)
-//            float side_angle = (float) (180-15+start_angle);
-//            float left = triangle_top*(float) Math.sin(Math.toRadians((side_angle)));
-//            float bottom = triangle_top*(float) Math.cos(Math.toRadians((side_angle)));
-//
-//            float curve_start_x = sensor_x-bottom;
-//            float curve_start_y = sensor_y - left;
-//            canvas.drawLine(curve_start_x, curve_start_y, 100, 100, paint);
-
-
-            // for RIGHT front sensor
-            float straight_angle = (float) 90-15+start_angle;
+            // LEFT FRONT SENSOR
+            float straight_angle = -(start_angle)-90;
             float opp = triangle_top*(float)Math.sin(Math.toRadians(straight_angle));
             float neighbor = triangle_top*(float)Math.cos(Math.toRadians(straight_angle));
 
-            // Find the coordinates of the end of the curve (right)
-            float curve_end_x = sensor_x + opp;
-            float curve_end_y = sensor_y - neighbor;
-            canvas.drawLine(curve_end_x, curve_end_y, 100, 100, paint);
-
             // find the coordinates of start of the curve (left)
-            float side_angle = -start_angle;
-            float right = triangle_top*(float) Math.sin(Math.toRadians((side_angle)));
+            float side_angle = (180-15+start_angle);
+            float side = triangle_top*(float) Math.sin(Math.toRadians((side_angle)));
             float bottom = triangle_top*(float) Math.cos(Math.toRadians((side_angle)));
+            float curve_start_x = sensor_x-bottom;
+            float curve_start_y = sensor_y - side;
 
-            float curve_start_x = sensor_x + bottom;
-            float curve_start_y = sensor_y - right;
-            canvas.drawLine(curve_start_x, curve_start_y, 100, 100, paint);
+            // Find the coordinates of the end of the curve (right)
+            float curve_end_x = sensor_x - opp;
+            float curve_end_y = sensor_y - neighbor;
+
+            if (front_sensor.sensorType == SensorType.RIGHT_FRONT) {
+                straight_angle = (float) 90-15+start_angle;
+                opp = triangle_top*(float)Math.sin(Math.toRadians(straight_angle));
+                neighbor = triangle_top*(float)Math.cos(Math.toRadians(straight_angle));
+
+                // find the coordinates of start of the curve (left)
+                side_angle = -start_angle;
+                side = triangle_top*(float) Math.sin(Math.toRadians((side_angle)));
+                bottom = triangle_top*(float) Math.cos(Math.toRadians((side_angle)));
+
+                curve_start_x = sensor_x + opp;
+                curve_start_y = sensor_y - neighbor;
+
+                // Find the coordinates of the end of the curve (right)
+                curve_end_x = sensor_x + bottom;
+                curve_end_y = sensor_y - side;
+            }
 
 
+            if (front_end_x >= 0 && front_end_y >= 0) {
+                canvas.drawLine(front_end_x, front_end_y, curve_start_x, curve_start_y, paint);
+            }
 
-
-        }*/
+            front_end_x = curve_end_x;
+            front_end_y = curve_end_y;
+        }
 
     }
 
