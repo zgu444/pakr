@@ -1,13 +1,14 @@
 package com.example.myfirstapp.plot;
 
 public class CarConstants {
-    public static final int CAR_WIDTH = 74*2;
-    public static final int CAR_LENGTH = 125*2;
-    public static final int POINTY_LENGTH = 7*2;
+    public static final int RATIO = 2;
+    public static final int CAR_WIDTH = 74*RATIO;
+    public static final int CAR_LENGTH = 125*RATIO;
+    public static final int POINTY_LENGTH = 7*RATIO;
     public static final float POINTY_YX_RATIO = POINTY_LENGTH/CAR_WIDTH/2;
-    public static final int SENSOR_FRONT_WHEEL = 24*2;
-    public static final int SENSOR_MID = 67*2;
-    public static final int SENSOR_BACK_WHEEL = 112;
+    public static final int SENSOR_FRONT_WHEEL = 24*RATIO;
+    public static final int SENSOR_MID = 67*RATIO;
+    public static final int SENSOR_BACK_WHEEL = 112*RATIO;
 
     /**
      * All coordinates are with respect to the center of the car

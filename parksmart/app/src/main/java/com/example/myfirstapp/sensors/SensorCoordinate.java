@@ -1,6 +1,6 @@
 package com.example.myfirstapp.sensors;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import com.example.myfirstapp.plot.CarConstants;
 
 public class SensorCoordinate {
     public float x_coord;
@@ -12,11 +12,11 @@ public class SensorCoordinate {
         x_coord = x;
         y_coord = y;
         this.sensorType = sensorType;
-        val = 30;
+        val = 100;
     }
 
     public synchronized float getVal(){
-        return val;
+        return val* CarConstants.RATIO;
     }
 
     public synchronized void setVal(float new_val){
