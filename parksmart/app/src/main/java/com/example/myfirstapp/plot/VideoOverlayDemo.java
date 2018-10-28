@@ -5,17 +5,18 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
+import com.example.myfirstapp.plot.CarConstants;
 
 import com.example.myfirstapp.sensors.SensorAdaptor;
 
 import java.util.ArrayList;
 
-//import com.example.myfirstapp.sensors.RPISensorAdaptor;
 
 public class VideoOverlayDemo extends View {
-//    private SensorAdaptor sensorAdaptor;
+    private static final int ANGLE_OFFSET = 15;
     public VideoOverlayDemo(Context context){
         super(context);
     }
@@ -28,18 +29,7 @@ public class VideoOverlayDemo extends View {
     @Override
     protected void onFinishInflate(){
         super.onFinishInflate();
-//        sensorAdaptor = new RPISensorAdaptor();
-
     }
-    final static int maxCharHeight = 15;
-    final static int minFontSize = 6;
-
-    final static int bg = Color.WHITE;
-    final static int fg = Color.BLACK;
-    final static int red = Color.RED;
-    final static int white = Color.WHITE;
-
-    private ArrayList<SensorAdaptor> left_sensors;
 
     private void curveTo(Path pth, int a, int b, int c, int d, int e, int f){
         pth.cubicTo((float)a,(float)b,(float)c,(float)d,(float)e,(float)f);
@@ -47,112 +37,59 @@ public class VideoOverlayDemo extends View {
 
     @Override protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        // custom drawing code here
         Paint paint = new Paint();
-
-//        Graphics2D g2 = (Graphics2D) g;
-//        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         int width = getWidth();
         int height = getHeight();
 
-        int gridWidth = width / 6;
-        int gridHeight = height / 2;
-
         int x_center = width / 2;
         int y_center = height / 2;
+        int wheelAngle = 0;
 
         paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(20);
+        paint.setColor(Color.RED);
 
-        // make the entire canvas white
-//        paint.setColor(Color.LTGRAY);
-//        RectF r1 = new RectF(0, 0 , width - 1, height -1);
-//        canvas.drawRoundRect(r1, (float)0.0, (float)0.0, paint);
+
+        // If wheel turns, draw arcs
+        if (wheelAngle != 10) {
+
+//            Path pback = new Path();
 //
-//        RectF r2 = new RectF(3, 3, width - 7, height - 7);
-//        canvas.drawRoundRect(r2, (float)0.0, (float)0.0, paint);
+//            pback.moveTo(x_center-width/2, y_center+height/2);
+//            curveTo(pback,x_center-width/2, y_center+height/2, x_center,
+//                    y_center+height/2 + 20, x_center+width/2, y_center+height/2);
+//            canvas.drawPath(pback, paint);
 
-        paint.setColor(fg);
-        int rectWidth = 79;
-        int rectHeight = 127;
+            double tan = Math.tan(Math.toRadians(wheelAngle));
+            float turn_radius = Math.round(CarConstants.CAR_LENGTH/tan-width/2);
+            float turn_center_x = x_center+turn_radius;
+            float turn_center_y = y_center+CarConstants.CAR_LENGTH/2;
 
+            float upper_left_x_right = turn_center_x - turn_radius + width/2;
+            float upper_left_y_right = turn_center_y - turn_radius;
+            float arcAngle_right = Math.round(2*CarConstants.CAR_LENGTH/(2*turn_radius*Math.PI)*360);
 
-        // draw the car
-        Path pfront = new Path();
-        pfront.moveTo(x_center-rectWidth/2, y_center-rectHeight/2);
-        curveTo(pfront, x_center-rectWidth/2, y_center-rectHeight/2,
-                x_center, y_center-rectHeight/2 - 20,
-                x_center+rectWidth/2, y_center-rectHeight/2);
-        pfront.close();
-        canvas.drawPath(pfront, paint);
+            float upper_left_x_left = turn_center_x - turn_radius -  width/2;
+            float upper_left_y_left = turn_center_y - turn_radius - width;
+            float arcAngle_left = Math.round(2*CarConstants.CAR_LENGTH/(2*(turn_radius+ width)*Math.PI)*360);
 
-        Path pback = new Path();
-        pback.moveTo(x_center-rectWidth/2, y_center+rectHeight/2);
-        curveTo(pback,x_center-rectWidth/2, y_center+rectHeight/2, x_center, y_center+rectHeight/2 + 20, x_center+rectWidth/2, y_center+rectHeight/2);
-        pback.close();
-        canvas.drawPath(pback, paint);
+            // Draw right curve
+            RectF rect_Right = new RectF(upper_left_x_right, upper_left_y_right, upper_left_x_right+2*turn_radius, upper_left_y_right+2*turn_radius);
+            canvas.drawArc (rect_Right, 180, arcAngle_right, false, paint);
 
-        canvas.drawLine(x_center-rectWidth/2, y_center-rectHeight/2, x_center-rectWidth/2, y_center+rectHeight/2, paint);
-        canvas.drawLine(x_center+rectWidth/2, y_center-rectHeight/2, x_center+rectWidth/2, y_center+rectHeight/2, paint);
+            // Draw left curve
+            RectF rect_Left = new RectF(upper_left_x_left, upper_left_y_left, upper_left_x_left+2*(turn_radius+ width), upper_left_y_left+2*(turn_radius+ width));
+            canvas.drawArc (rect_Left, 180, arcAngle_left, false, paint);
+        }
 
-        canvas.drawLine(x_center-rectWidth/2, y_center-rectHeight/2, x_center+rectWidth/2, y_center-rectHeight/2, paint);
-        canvas.drawLine(x_center-rectWidth/2, y_center+rectHeight/2, x_center-rectWidth/2, y_center+rectHeight/2, paint);
+        // If wheels didn't turn, draw straight lines
+        else {
+            float x_offset = height*(float) Math.tan(Math.toRadians(ANGLE_OFFSET));
+            canvas.drawLine(x_offset, 0, 0, height, paint);
+            canvas.drawLine(width-x_offset, 0, width, height, paint);
+            canvas.drawLine(x_offset, 0,width-x_offset, 0, paint);
+        }
 
-        // Draw outline on the left side of based on (x,y) of a sensor and its distance feedback
-        paint.setColor(Color.BLUE);
-//        canvas.drawArc(x_center-rectWidth/2-40-40, y_center-rectHeight/2-40+10-40,
-//                x_center-rectWidth/2,y_center+rectHeight/2+10,
-//                173, 15, false, paint);
-
-        int x_arc = x_center-rectWidth/2;
-        int y_arc1 = y_center-rectHeight/2+10;
-        int y_arc2 = y_center-rectHeight/2+60;
-        int y_arc3 = y_center-rectHeight/2+120;
-        int dist1 = 40;
-        int dist2 = 30;
-        int dist3 = 50;
-        int x_1 = (int)(x_arc- dist1*(Math.sin(8)));
-        int y_1_low = (int)(y_arc1 - dist1*(Math.cos(8)));
-        int y_1_high = (int)(y_arc1 + dist1*(Math.cos(8)));
-
-        int x_2 = (int)(x_arc - dist2*(Math.sin(8)));
-        int y_2_high = (int)(y_arc2 + dist2*(Math.cos(8)));
-        int y_2_low = (int)(y_arc2 - dist2*(Math.cos(8)));
-
-
-        int x_3 = (int)(x_arc - dist3*(Math.sin(8)));
-        int y_3_high = (int)(y_arc3 + dist3*(Math.cos(8)));
-        int y_3_low = (int)(y_arc3 - dist3*(Math.cos(8)));
-
-        Path p1 = new Path();
-        p1.moveTo(x_2, y_2_high);
-        p1.arcTo(x_center-rectWidth/2-40-40, y_center-rectHeight/2-40+10-40,
-                x_center-rectWidth/2,y_center+rectHeight/2+10,
-                173, 15, false);
-        p1.close();
-        canvas.drawPath(p1,paint);
-
-        paint.setColor(Color.CYAN);
-        canvas.drawLine(x_1, y_1_low, x_2, y_2_high, paint);
-        canvas.drawLine(x_2, y_2_low, x_3, y_3_high, paint);
-//<<<<<<< HEAD
-        paint.setColor(red);
-//        canvas.drawArc(x_center-rectWidth/2-30-30, y_center-rectHeight/2-30+60-30,
-//                x_center-rectWidth/2,y_center+rectHeight/2+60,
-//                173, 15, false, paint);
-//        canvas.drawArc(x_center-rectWidth/2-50-50, y_center-rectHeight/2-50+120-50,
-//                x_center-rectWidth/2,y_center-rectHeight/2+120,
-//                173, 15,false, paint);
-
-        // for(int i = 0; i < left_sensors.size(); i++){
-        //     g2.drawArc(left_sensors.get(0)+dist, left_sensors);
-        // }
-//=======
-        canvas.drawArc(x_center-rectWidth/2-30, y_center-rectHeight/2-30+60, 30*2,
-                30*2, 173, 15, false, paint);
-        canvas.drawArc(x_center-rectWidth/2-50, y_center-rectHeight/2-50+120, 50*2,
-                50*2, 173, 15,false, paint);
-
-//>>>>>>> e274800ac6093fb8394d8d86f822f44cfaec871e
 
     }
 
