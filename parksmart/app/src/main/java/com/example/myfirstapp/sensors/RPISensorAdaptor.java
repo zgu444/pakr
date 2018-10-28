@@ -22,7 +22,6 @@ public class RPISensorAdaptor extends AsyncTask<Void, Void, Void> implements Sen
     public static RPISensorAdaptor get_rpiadaptor(){
         if (my_adaptor == null){
             my_adaptor = new RPISensorAdaptor(10);
-            my_adaptor.populate_rpiadaptor(0, 0);
         }
         return my_adaptor;
     }
@@ -99,14 +98,13 @@ public class RPISensorAdaptor extends AsyncTask<Void, Void, Void> implements Sen
     }
 
     private final SensorCoordinate[] sensors;
-    private final SocketClient socket_client;
+    private SocketClient socket_client;
     private int size;
     private float x_center;
     private float y_center;
 
     private RPISensorAdaptor(int arr_size){
         sensors = new SensorCoordinate[arr_size];
-        socket_client = new SocketClient(PORT_NUMBER);
         size = arr_size;
     }
 
@@ -141,6 +139,7 @@ public class RPISensorAdaptor extends AsyncTask<Void, Void, Void> implements Sen
 
     @Override
     protected Void doInBackground(Void... voids) {
+        socket_client = new SocketClient(PORT_NUMBER);
         while(!this.isCancelled()){
             try {
                 Thread.sleep(200);
