@@ -17,6 +17,8 @@ import com.example.myfirstapp.sensors.SensorType;
 import java.util.ArrayList;
 
 public class CarPlotDemo extends View {
+    private static final int SWEEP_ANGLE = 15;
+
     public CarPlotDemo(Context context){
         super(context);
     }
@@ -108,32 +110,16 @@ public class CarPlotDemo extends View {
         // Draw outline on the left side of based on (x,y) of a sensor and its distance feedback
         paint.setColor(Color.BLUE);
 
-        // TODO: replace with values from SensorAdaptor once implemented
-        // Testing values
-        // Assume sensor1 is at 1/4 of car length from the front on the left
-        float sensor1_x = x_center-rectWidth/2;
-        float sensor1_y = y_center-rectHeight/4;
-        float sensor1_distance = 200;
-
-        // Assume sensor2 is at 3/4 of car length from the front on the left
-        float sensor2_x = x_center-rectWidth/2;
-        float sensor2_y = y_center+rectHeight/4;
-        float sensor2_distance = 150;
-
-        float[] sensor1 = {sensor1_x, sensor1_y, sensor1_distance};
-        float[] sensor2 = {sensor2_x, sensor2_y, sensor2_distance};
-
-        float[][] sensors = {sensor1, sensor2};
-        float[][] curve_points = new float[4][2];
-
         // This for loop draws the outline of obstacles
         // based on the (x,y) values of sensors, placement of sensors (left, right, front, back)
         // and distance feedback
+        float end_x = -1;
+        float end_y = -1;
 
-        for (int i=0; i<sensors.length; i++) {
-            float sensor_x = sensors[i][0];
-            float sensor_y = sensors[i][1];
-            float sensor_distance = sensors[i][2];
+        for (SensorCoordinate left_sensor : left_sensors) {
+            float sensor_x = left_sensor.x_coord;
+            float sensor_y = left_sensor.y_coord;
+            float sensor_distance = left_sensor.getVal();
 
             float rect_left = sensor_x-sensor_distance;
             float rect_top = sensor_y-sensor_distance;
@@ -149,12 +135,11 @@ public class CarPlotDemo extends View {
             // if back sensor
             // float start_angle = (float) 82.5;
 
-            float sweep_angle = 15;
 
             RectF rectF = new RectF(rect_left, rect_top, rect_right, rect_bottom);
-            canvas.drawArc (rectF, start_angle, sweep_angle, false, paint);
+            canvas.drawArc (rectF, start_angle, SWEEP_ANGLE, false, paint);
 
-            float half_angle = sweep_angle/2;
+            float half_angle = SWEEP_ANGLE/2;
             float triangle_top = sensor_distance*(float)Math.cos(Math.toRadians(half_angle));
             float triangle_bottom = triangle_top*(float)Math.cos(Math.toRadians(half_angle));
             float triangle_side = triangle_top*(float)Math.sin(Math.toRadians(half_angle));
@@ -165,6 +150,9 @@ public class CarPlotDemo extends View {
             // Find the coordinates of the start of the curve (top)
             float curve_start_x = sensor_x - triangle_bottom;
             float curve_start_y = sensor_y - triangle_side;
+            if (end_x >= 0 && end_y >= 0) {
+                canvas.drawLine(end_x, end_y, curve_start_x, curve_start_y, paint);
+            }
 
             // Find the coordinates of the end of the curve (bottom)
             float curve_end_x = sensor_x - triangle_bottom;
@@ -193,28 +181,11 @@ public class CarPlotDemo extends View {
 
             // This part adds the (x,y) coordinates of the start and end point of each curve to an array
             // so that we can later connect the curves
-            curve_points[i*2][0] = curve_start_x;
-            curve_points[i*2][1] = curve_start_y;
-            curve_points[i*2+1][0] = curve_end_x;
-            curve_points[i*2+1][1] = curve_end_y;
+
+            end_x = curve_end_x;
+            end_y = curve_end_y;
         }
-
-
-        // TODO: index step by 2; differentiate left and right
-        // TODO: arrange values such that all left sensors are together,
-        // TODO: all right sensors are together
-        // TODO: figure out how to connect the front/back curves with the side curves
-
-        // Connect the different curves
-        for (int i=1; i<2; i++) {
-            float start_x = curve_points[i][0];
-            float start_y = curve_points[i][1];
-            float end_x = curve_points[i+1][0];
-            float end_y = curve_points[i+1][1];
-
-            canvas.drawLine(start_x, start_y, end_x, end_y, paint);
-        }
-
+/*
         // TODO: remove whole section once integrated with sensor adaptor
         // Draw outline on the right side of based on (x,y) of a sensor and its distance feedback
         paint.setColor(Color.BLUE);
@@ -417,7 +388,7 @@ public class CarPlotDemo extends View {
 
 
 
-        }
+        }*/
 
     }
 

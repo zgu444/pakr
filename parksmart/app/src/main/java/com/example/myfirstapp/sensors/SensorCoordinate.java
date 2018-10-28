@@ -10,7 +10,7 @@ public class SensorCoordinate {
         x_coord = x;
         y_coord = y;
         this.sensorType = sensorType;
-        val = 0;
+        val = 30;
     }
 
     public synchronized float getVal(){
