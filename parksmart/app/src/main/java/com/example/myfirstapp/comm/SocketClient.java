@@ -77,9 +77,9 @@ public class SocketClient{
         try
         {
             // write text to the socket
-//            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-//            bufferedWriter.write(writeTo);
-//            bufferedWriter.flush();
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            bufferedWriter.write(writeTo);
+            bufferedWriter.flush();
             
             // read text from the socket
             if(bufferedReader == null)
