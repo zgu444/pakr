@@ -62,7 +62,7 @@ public class VideoOverlayDemo extends View {
 
         int x_center = width / 2;
         int y_center = height / 2;
-        float wheelAngle = -CarConstants.GYRO_RATIO * gyro.getVal();
+        float wheelAngle = CarConstants.GYRO_RATIO * gyro.getVal();
 
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(20);
@@ -82,19 +82,6 @@ public class VideoOverlayDemo extends View {
             float upper_left_x_left = turn_center_x - turn_radius -  width/2;
             float upper_left_y_left = turn_center_y - turn_radius - width;
             float arcAngle_left = Math.round(2*CarConstants.CAR_LENGTH/(2*(turn_radius+ width)*Math.PI)*360);
-
-//            Path pback = new Path();
-//
-//            // starting point, left bottom corner of screen
-//            pback.moveTo(height, 0);
-//
-//            float total_angle = wheelAngle + ANGLE_OFFSET;
-//            float x_offset = height*(float) Math.tan(Math.toRadians(total_angle));
-//
-//            curveTo(pback,height, 0, x_offset/2,
-//                    y_center+height/2 + 20, x_center+width/2, y_center+height/2);
-//            canvas.drawPath(pback, paint);
-
 
             // Draw right curve
             RectF rect_Right = new RectF(upper_left_x_right, upper_left_y_right, upper_left_x_right+2*turn_radius, upper_left_y_right+2*turn_radius);

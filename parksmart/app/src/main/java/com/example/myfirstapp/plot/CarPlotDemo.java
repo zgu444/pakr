@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.graphics.DashPathEffect;
+import android.hardware.Sensor;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -57,6 +59,7 @@ public class CarPlotDemo extends View {
                     right_sensors.add(coord);
                     break;
                 case GYRO:
+                    gyro = coord;
                     break;
             }
 
@@ -68,6 +71,7 @@ public class CarPlotDemo extends View {
     }
     private SensorAdaptor myAdaptor;
     private ArrayList<SensorCoordinate> left_sensors, front_sensors, right_sensors, back_sensors;
+    private SensorCoordinate gyro;
     private int x_center, y_center;
 
     private void curveTo(Path pth, int a, int b, int c, int d, int e, int f){
@@ -306,6 +310,47 @@ public class CarPlotDemo extends View {
             front_end_x = curve_end_x;
             front_end_y = curve_end_y;
         }
+
+
+        // Draw prediction
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(5);
+        paint.setColor(Color.BLUE);
+        paint.setPathEffect(new DashPathEffect(new float[] {10,20}, 0));
+
+        // If wheel turns, draw arcs
+//        float wheelAngle = CarConstants.GYRO_RATIO * gyro.getVal();
+        float wheelAngle = 0;
+
+        if (wheelAngle != 0) {
+            double tan = Math.tan(Math.toRadians(wheelAngle));
+            float turn_radius = Math.round(CarConstants.CAR_LENGTH/tan-CarConstants.CAR_WIDTH/2);
+            float turn_center_x = x_center+turn_radius;
+            float turn_center_y = y_center+CarConstants.CAR_LENGTH/2;
+
+            float upper_left_x_right = turn_center_x - turn_radius + CarConstants.CAR_WIDTH/2;
+            float upper_left_y_right = turn_center_y - turn_radius;
+            float arcAngle_right = Math.round(2*CarConstants.CAR_LENGTH/(2*turn_radius*Math.PI)*360);
+
+            float upper_left_x_left = turn_center_x - turn_radius -  CarConstants.CAR_WIDTH/2;
+            float upper_left_y_left = turn_center_y - turn_radius - CarConstants.CAR_WIDTH;
+            float arcAngle_left = Math.round(2*CarConstants.CAR_LENGTH/(2*(turn_radius+ CarConstants.CAR_WIDTH)*Math.PI)*360);
+
+            // Draw right curve
+            RectF rect_Right = new RectF(upper_left_x_right, upper_left_y_right, upper_left_x_right+2*turn_radius, upper_left_y_right+2*turn_radius);
+            canvas.drawArc (rect_Right, 180, arcAngle_right, false, paint);
+
+            // Draw left curve
+            RectF rect_Left = new RectF(upper_left_x_left, upper_left_y_left, upper_left_x_left+2*(turn_radius+ CarConstants.CAR_WIDTH), upper_left_y_left+2*(turn_radius+ CarConstants.CAR_WIDTH));
+            canvas.drawArc (rect_Left, 180, arcAngle_left, false, paint);
+        }
+
+        // If wheels didn't turn, draw straight lines
+        else {
+            canvas.drawLine(x_center-CarConstants.CAR_WIDTH/2, y_center+CarConstants.CAR_LENGTH/2, x_center-CarConstants.CAR_WIDTH/2, y_center+CarConstants.CAR_LENGTH*2, paint);
+            canvas.drawLine(x_center+CarConstants.CAR_WIDTH/2, y_center+CarConstants.CAR_LENGTH/2, x_center+CarConstants.CAR_WIDTH/2, y_center+CarConstants.CAR_LENGTH*2, paint);
+        }
+
 
     }
 
