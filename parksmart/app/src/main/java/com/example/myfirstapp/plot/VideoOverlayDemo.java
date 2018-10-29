@@ -10,13 +10,16 @@ import android.util.AttributeSet;
 import android.view.View;
 import com.example.myfirstapp.plot.CarConstants;
 
+import com.example.myfirstapp.sensors.RPISensorAdaptor;
 import com.example.myfirstapp.sensors.SensorAdaptor;
+import com.example.myfirstapp.sensors.SensorCoordinate;
+import com.example.myfirstapp.sensors.SensorType;
 
 import java.util.ArrayList;
 
 
 public class VideoOverlayDemo extends View {
-    private static final int ANGLE_OFFSET = 15;
+    private static final int ANGLE_OFFSET = 30;
     public VideoOverlayDemo(Context context){
         super(context);
     }
@@ -35,23 +38,38 @@ public class VideoOverlayDemo extends View {
         pth.cubicTo((float)a,(float)b,(float)c,(float)d,(float)e,(float)f);
     }
 
+    private SensorCoordinate gyro;
+
     @Override protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (gyro == null){
+            SensorAdaptor my_rpi = RPISensorAdaptor.get_adaptor_no_create();
+            if (my_rpi == null)
+                return;
+            SensorCoordinate[] sensors = my_rpi.getSensors();
+            for (SensorCoordinate sensor: sensors){
+                if (sensor.sensorType == SensorType.GYRO)
+                    gyro = sensor;
+            }
+            if (gyro == null)
+                return;
+        }
+        assert(gyro != null);
+
         Paint paint = new Paint();
         int width = getWidth();
         int height = getHeight();
 
         int x_center = width / 2;
         int y_center = height / 2;
-        int wheelAngle = 0;
+        float wheelAngle = -CarConstants.GYRO_RATIO * gyro.getVal();
 
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(20);
         paint.setColor(Color.RED);
 
-
         // If wheel turns, draw arcs
-        if (wheelAngle != 10) {
+        if (wheelAngle != 0) {
             double tan = Math.tan(Math.toRadians(wheelAngle));
             float turn_radius = Math.round(CarConstants.CAR_LENGTH/tan-width/2);
             float turn_center_x = x_center+turn_radius;
@@ -90,9 +108,9 @@ public class VideoOverlayDemo extends View {
         // If wheels didn't turn, draw straight lines
         else {
             float x_offset = height*(float) Math.tan(Math.toRadians(ANGLE_OFFSET));
-            canvas.drawLine(x_offset, 0, 0, height, paint);
-            canvas.drawLine(width-x_offset, 0, width, height, paint);
-            canvas.drawLine(x_offset, 0,width-x_offset, 0, paint);
+            canvas.drawLine(x_offset/2, height/2, 0, height, paint);
+            canvas.drawLine(width-x_offset/2, height/2, width, height, paint);
+            canvas.drawLine(x_offset/2, height/2,width-x_offset/2, height/2, paint);
         }
 
 

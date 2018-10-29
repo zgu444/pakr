@@ -38,7 +38,7 @@ void setup() {
 }
  
 void loop() {
-   delay(100);
+   delay(30);
    unsigned int distance_0 = sonar_0.convert_cm(sonar_0.ping_median());
    unsigned int distance_1 = sonar_1.convert_cm(sonar_1.ping_median());
    unsigned int distance_2 = sonar_2.convert_cm(sonar_2.ping_median());

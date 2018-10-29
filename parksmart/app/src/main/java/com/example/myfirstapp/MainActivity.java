@@ -91,10 +91,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
         View carPlot= findViewById(R.id.carPlot);
+        View carPath = findViewById(R.id.videoOverlay);
 
 //        carPlot.setBackgroundDrawable();
         my_rpi = RPISensorAdaptor.get_rpiadaptor();
-        my_rpi.execute(carPlot);
+        my_rpi.execute(carPlot, carPath);
+
 
     }
 

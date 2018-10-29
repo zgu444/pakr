@@ -2,6 +2,7 @@ package com.example.myfirstapp.plot;
 
 public class CarConstants {
     public static final int RATIO = 2;
+    public static final float GYRO_RATIO = 2/3;
     public static final int CAR_WIDTH = 74*RATIO;
     public static final int CAR_LENGTH = 125*RATIO;
     public static final int POINTY_LENGTH = 7*RATIO;

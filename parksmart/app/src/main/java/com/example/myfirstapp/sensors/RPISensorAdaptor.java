@@ -22,6 +22,9 @@ public class RPISensorAdaptor extends AsyncTask<View, Void, Void> implements Sen
         }
         return my_adaptor;
     }
+    public static RPISensorAdaptor get_adaptor_no_create(){
+        return my_adaptor;
+    }
     public static RPISensorAdaptor get_rpiadaptor(int center_x, int center_y){
         if (my_adaptor == null){
             my_adaptor = create_rpiadaptor(center_x, center_y);
