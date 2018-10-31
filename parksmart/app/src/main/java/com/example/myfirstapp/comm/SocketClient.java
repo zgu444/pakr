@@ -7,6 +7,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -18,26 +19,22 @@ public class SocketClient{
     private Socket socket;
     private BufferedReader bufferedReader;
 
-    public SocketClient(int port){
+    public SocketClient(int port) throws IOException {
         String server_name = "PARKRPI.WV.CC.CMU.EDU";
-        try
-        {
-            // open a socket
-            socket = openSocket(server_name, port);
-            
-            // write-to, and read-from the socket.
-            // in this case just write a simple command to a web server.
+
+        // open a socket
+        socket = openSocket(server_name, port);
+        if (socket == null) throw new IOException();
+
+        // write-to, and read-from the socket.
+        // in this case just write a simple command to a web server.
 //            String result = writeToAndReadFromSocket(socket, "GET /\n\n");
-            
-            // print out the result we got back from the server
-            //System.out.println(result);
-            Log.d("socket", "connected to "+server_name);
-            // close the socket, and we're done
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+
+        // print out the result we got back from the server
+        //System.out.println(result);
+        Log.d("socket", "connected to "+server_name);
+        // close the socket, and we're done
+
     }
 
     /**
@@ -45,7 +42,7 @@ public class SocketClient{
      * This method currently sets the socket timeout value to 10 seconds.
      * (A second version of this method could allow the user to specify this timeout.)
      */
-    private Socket openSocket(String server, int port) throws Exception
+    private Socket openSocket(String server, int port)
     {
         Socket socket;
 
@@ -64,11 +61,11 @@ public class SocketClient{
 
             return socket;
         }
-        catch (SocketTimeoutException ste)
+        catch (IOException ste)
         {
             Log.d("socket err","Timed out waiting for the socket.");
             ste.printStackTrace();
-            throw ste;
+            return null;
         }
     }
 
@@ -95,6 +92,10 @@ public class SocketClient{
             e.printStackTrace();
             return "";
         }
+    }
+
+    public void close() throws IOException {
+        socket.close();
     }
 
 

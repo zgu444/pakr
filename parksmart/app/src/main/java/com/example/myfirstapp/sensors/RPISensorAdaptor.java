@@ -9,6 +9,8 @@ import com.example.myfirstapp.comm.SocketClient;
 import com.example.myfirstapp.plot.CarConstants;
 
 
+import java.io.IOException;
+import java.net.ConnectException;
 import java.util.Arrays;
 
 @SuppressLint("NewApi")
@@ -124,8 +126,15 @@ public class RPISensorAdaptor extends AsyncTask<View, Void, Void> implements Sen
 
 
     public synchronized void refreshDistance(){
-        String data = socket_client.writeToAndReadFromSocket("0");
-        parseReadings(data);
+        try {
+            SocketClient socket_client = new SocketClient(PORT_NUMBER);
+            String data = socket_client.writeToAndReadFromSocket("0");
+            parseReadings(data);
+            socket_client.close();
+        } catch (IOException e) {
+            Log.d("RPISensorAdaptor","Socket connection not ready");
+            e.printStackTrace();
+        }
     }
 
     private void parseReadings(String data){
@@ -143,8 +152,7 @@ public class RPISensorAdaptor extends AsyncTask<View, Void, Void> implements Sen
 
     @Override
     protected Void doInBackground(View... views) {
-        socket_client = new SocketClient(PORT_NUMBER);
-        while(!this.isCancelled()){
+         while(!this.isCancelled()){
             try {
                 Thread.sleep(100);
                 refreshDistance();

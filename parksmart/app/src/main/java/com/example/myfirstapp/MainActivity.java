@@ -36,56 +36,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button muteButton = findViewById(R.id.mute);
+        final Button playButton = findViewById(R.id.playButton);
 
-        muteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        Button muteBv = findViewById(R.id.mute);
         final TextView textV = findViewById(R.id.playStatus);
-
-//        final VideoView videoView = findViewById(R.id.videoViewMain);
-//        videoView.setVideoPath(RTSP_ADDR);
-
-//        RequestQueue q = Volley.newRequestQueue(this);
-//        StringRequest sr = new StringRequest(Request.Method.GET, "http://www.google.com",
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String r) {
-//                        Log.d("rtsp string", r);
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        Log.d("rtsp string", error.toString());
-//                    }
-//                });
-//        q.add(sr);
-//        Log.d("rtsp string", "added");
 
         final TextureView textureView = findViewById(R.id.textureVideoMain);
         textureView.setOpaque(false);
-//        textureView.setBackgroundColor(Color.BLACK);
         final EasyPlayerClient client = new EasyPlayerClient(this, KEY, textureView, null, null);
 
 
-        muteBv.setOnClickListener(new View.OnClickListener(){
+        playButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 if (playing){
                     client.stop();
                     playing = false;
                     textV.setText("Not Playing");
+                    playButton.setText("Play");
                 }
                 else{
                     client.play(RTSP_ADDR);
                     playing = true;
                     textV.setText("Playing");
+                    playButton.setText("Pause");
                 }
             }
         });
