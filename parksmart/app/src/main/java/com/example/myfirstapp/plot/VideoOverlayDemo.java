@@ -62,7 +62,8 @@ public class VideoOverlayDemo extends View {
 
         int x_center = width / 2;
         int y_center = height / 2;
-        float wheelAngle = CarConstants.GYRO_RATIO * gyro.getVal();
+        float angle_ratio = ((float)-2.0)/((float)3.0);
+        float wheelAngle = gyro.getVal()*angle_ratio;
 
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(20);
