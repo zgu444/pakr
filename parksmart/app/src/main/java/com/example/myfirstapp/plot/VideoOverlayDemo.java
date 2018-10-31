@@ -34,7 +34,7 @@ public class VideoOverlayDemo extends View {
         super.onFinishInflate();
     }
 
-    private void curveTo(Path pth, int a, int b, int c, int d, int e, int f){
+    private void curveTo(Path pth, float a, float b, float c, float d, float e, float f){
         pth.cubicTo((float)a,(float)b,(float)c,(float)d,(float)e,(float)f);
     }
 
@@ -63,35 +63,68 @@ public class VideoOverlayDemo extends View {
         int x_center = width / 2;
         int y_center = height / 2;
         float angle_ratio = ((float)-2.0)/((float)3.0);
-        float wheelAngle = gyro.getVal()*angle_ratio;
+//        float wheelAngle = gyro.getVal()*angle_ratio;
+        float wheelAngle = 0;
 
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(20);
         paint.setColor(Color.RED);
 
-        // If wheel turns, draw arcs
-        if (wheelAngle != 0) {
+        if (wheelAngle > 0) {
+            float x_offset = height*(float) Math.tan(Math.toRadians(ANGLE_OFFSET));
             double tan = Math.tan(Math.toRadians(wheelAngle));
-            float turn_radius = Math.round(CarConstants.CAR_LENGTH/tan-width/2);
+            float turn_radius = Math.round(CarConstants.CAR_LENGTH/tan-CarConstants.CAR_WIDTH/2);
             float turn_center_x = x_center+turn_radius;
             float turn_center_y = y_center+CarConstants.CAR_LENGTH/2;
 
-            float upper_left_x_right = turn_center_x - turn_radius + width/2;
+            float upper_left_x_right = turn_center_x - turn_radius + CarConstants.CAR_WIDTH/2;
             float upper_left_y_right = turn_center_y - turn_radius;
             float arcAngle_right = Math.round(2*CarConstants.CAR_LENGTH/(2*turn_radius*Math.PI)*360);
 
-            float upper_left_x_left = turn_center_x - turn_radius -  width/2;
-            float upper_left_y_left = turn_center_y - turn_radius - width;
-            float arcAngle_left = Math.round(2*CarConstants.CAR_LENGTH/(2*(turn_radius+ width)*Math.PI)*360);
+            float upper_left_x_left = turn_center_x - turn_radius -  CarConstants.CAR_WIDTH/2;
+            float upper_left_y_left = turn_center_y - turn_radius - CarConstants.CAR_WIDTH;
+            float arcAngle_left = Math.round(2*CarConstants.CAR_LENGTH/(2*(turn_radius+ CarConstants.CAR_WIDTH)*Math.PI)*360);
 
             // Draw right curve
-            RectF rect_Right = new RectF(upper_left_x_right, upper_left_y_right, upper_left_x_right+2*turn_radius, upper_left_y_right+2*turn_radius);
-            canvas.drawArc (rect_Right, 180, arcAngle_right, false, paint);
+            Path pback = new Path();
+            pback.moveTo(0, height);
+            curveTo(pback,0, height,
+                    x_offset/2, height - height/4, x_offset, height/2);
+            canvas.drawPath(pback, paint);
+
+
+//            RectF rect_Right = new RectF(upper_left_x_right, upper_left_y_right, upper_left_x_right+2*turn_radius, upper_left_y_right+2*turn_radius);
+//            canvas.drawArc (rect_Right, 180, -arcAngle_right, false, paint);
+//
+//            // Draw left curve
+//            RectF rect_Left = new RectF(upper_left_x_left, upper_left_y_left, upper_left_x_left+2*(turn_radius+ CarConstants.CAR_WIDTH), upper_left_y_left+2*(turn_radius+ CarConstants.CAR_WIDTH));
+//            canvas.drawArc (rect_Left, 180, -arcAngle_left, false, paint);
+        }
+
+        else if (wheelAngle < 0) {
+            double tan = Math.tan(Math.toRadians(-wheelAngle));
+            float turn_radius = Math.round(CarConstants.CAR_LENGTH/tan-CarConstants.CAR_WIDTH/2);
+            float turn_center_x = x_center-turn_radius;
+            float turn_center_y = y_center+CarConstants.CAR_LENGTH/2;
+
+            float upper_left_x_left = turn_center_x - turn_radius - CarConstants.CAR_WIDTH/2;
+            float upper_left_y_left = turn_center_y - turn_radius;
+            float arcAngle_right = Math.round(2*CarConstants.CAR_LENGTH/(2*turn_radius*Math.PI)*360);
+
+            float upper_left_x_right = turn_center_x - turn_radius -  CarConstants.CAR_WIDTH*3/2;
+            float upper_left_y_right = turn_center_y - turn_radius - CarConstants.CAR_WIDTH;
+            float arcAngle_left = Math.round(2*CarConstants.CAR_LENGTH/(2*(turn_radius+ CarConstants.CAR_WIDTH)*Math.PI)*360);
+
+            // Draw right curve
+            RectF rect_Left = new RectF(upper_left_x_left, upper_left_y_left, upper_left_x_left+2*turn_radius, upper_left_y_left+2*turn_radius);
+            canvas.drawArc (rect_Left, 0, arcAngle_left, false, paint);
 
             // Draw left curve
-            RectF rect_Left = new RectF(upper_left_x_left, upper_left_y_left, upper_left_x_left+2*(turn_radius+ width), upper_left_y_left+2*(turn_radius+ width));
-            canvas.drawArc (rect_Left, 180, arcAngle_left, false, paint);
+            RectF rect_Right = new RectF(upper_left_x_right, upper_left_y_right, upper_left_x_right+2*(turn_radius+ CarConstants.CAR_WIDTH), upper_left_y_right+2*(turn_radius+ CarConstants.CAR_WIDTH));
+            canvas.drawArc (rect_Right, 0, arcAngle_right, false, paint);
+
         }
+
 
         // If wheels didn't turn, draw straight lines
         else {
