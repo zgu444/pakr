@@ -19,16 +19,22 @@ double pitch,roll,yaw;
 #define TRIGGER_PIN_3 6 
 #define ECHO_PIN_3 7
 
-#define SENSOR_NUM 4
+#define SONAR_NUM 4
 #define MAX_DISTANCE 200
+#define PING_INTERVAL 33 // Milliseconds between sensor pings (29ms is about the min to avoid cross-sensor echo).
 
-char readings[ (SENSOR_NUM+1) * sizeof(int) ];
+char readings[ (SONAR_NUM+1) * 8 ];
+unsigned long pingTimer[SONAR_NUM]; // Holds the times when the next ping should happen for each sensor.
+unsigned int cm[SONAR_NUM];         // Where the ping distances are stored.
+uint8_t currentSensor = 0;          // Keeps track of which sensor is active.
 
+NewPing sonar[SONAR_NUM] = { 
 // NewPing setup of pins and maximum distance
-NewPing sonar_0(TRIGGER_PIN_0, ECHO_PIN_0, MAX_DISTANCE); 
-NewPing sonar_1(TRIGGER_PIN_1, ECHO_PIN_1, MAX_DISTANCE); 
-NewPing sonar_2(TRIGGER_PIN_2, ECHO_PIN_2, MAX_DISTANCE); 
-NewPing sonar_3(TRIGGER_PIN_3, ECHO_PIN_3, MAX_DISTANCE); 
+NewPing (TRIGGER_PIN_0, ECHO_PIN_0, MAX_DISTANCE),
+NewPing (TRIGGER_PIN_1, ECHO_PIN_1, MAX_DISTANCE), 
+NewPing (TRIGGER_PIN_2, ECHO_PIN_2, MAX_DISTANCE), 
+NewPing (TRIGGER_PIN_3, ECHO_PIN_3, MAX_DISTANCE) 
+};
 
 void setup() {
   Wire.begin();
@@ -36,15 +42,26 @@ void setup() {
   Wire.write(0x6B);
   Wire.write(0);
   Wire.endTransmission(true);
+
+  pingTimer[0] = millis() + 75;           // First ping starts at 75ms, gives time for the Arduino to chill before starting.
+  for (uint8_t i = 1; i < SONAR_NUM; i++) // Set the starting time for each sensor.
+  pingTimer[i] = pingTimer[i - 1] + PING_INTERVAL;
+    
   Serial.begin(115200);
 }
  
 void loop() {
-   unsigned int distance_0 = sonar_0.convert_cm(sonar_0.ping_median());
-   unsigned int distance_1 = sonar_1.convert_cm(sonar_1.ping_median());
-   unsigned int distance_2 = sonar_2.convert_cm(sonar_2.ping_median());
-   unsigned int distance_3 = sonar_3.convert_cm(sonar_3.ping_median());
-
+  for (uint8_t i = 0; i < SONAR_NUM; i++) { // Loop through all the sensors.
+    if (millis() >= pingTimer[i]) {         // Is it this sensor's time to ping?
+      pingTimer[i] += PING_INTERVAL * SONAR_NUM;  // Set next time this sensor will be pinged.
+      if (i == 0 && currentSensor == SONAR_NUM - 1) oneSensorCycle(); // Sensor ping cycle complete, do something with the results.
+      sonar[currentSensor].timer_stop();          // Make sure previous timer is canceled before starting a new ping (insurance).
+      currentSensor = i;                          // Sensor being accessed.
+      cm[currentSensor] = 0;                      // Make distance zero in case there's no ping echo for this sensor.
+      sonar[currentSensor].ping_timer(echoCheck); // Do the ping (processing continues, interrupt will call echoCheck to look for echo).
+    }
+  }
+  
   Wire.beginTransmission(MPU);
   Wire.write(0x3B);
   Wire.endTransmission(false);
@@ -76,18 +93,28 @@ void loop() {
   
   //get pitch/roll
   getAngle(AcX,AcY,AcZ);
+}
 
-//  Serial.println(roll);
-  signed int roll_d = (unsigned int) roll;
-  
-  // needs revision
-  sprintf(readings, "%u, %u, %u, %u, %i", distance_0, distance_1, distance_2, distance_3, roll_d);
-  
-  if (stringComplete) {
-    Serial.println(readings);
-    stringComplete = false;
-  }
-  
+void echoCheck() { // If ping received, set the sensor distance to array.
+  if (sonar[currentSensor].check_timer())
+    cm[currentSensor] = sonar[currentSensor].ping_result / US_ROUNDTRIP_CM;
+}
+
+void oneSensorCycle() { // Sensor ping cycle complete, do something with the results.
+  // The following code would be replaced with your code that does something with the ping results.
+    if (Serial.available() > 0){
+    signed int roll_d = (unsigned int) roll;
+
+     char inChar =  Serial.read();
+  //   Serial.println("????");
+      if (inChar == 'p') {
+        sprintf(readings, "%u, %u, %u, %u, %i", 
+        cm[0], cm[1], cm[2], cm[3], roll_d);
+        while(Serial.available()) {Serial.read();}
+        Serial.println(readings);
+//        Serial.println("Here\n");
+      }
+    }
 }
 
 //convert the accel data to pitch/roll
@@ -106,19 +133,3 @@ void getAngle(int Vx,int Vy,int Vz) {
   yaw = yaw * (180/0/PI);
 } 
 
-/*
-  SerialEvent occurs whenever a new data comes in the hardware serial RX. This
-  routine is run between each time loop() runs, so using delay inside loop can
-  delay response. Multiple bytes of data may be available.
-*/
-void serialEvent() {
-  while (Serial.available()) {
-    // get the new byte:
-    char inChar = (char)Serial.read();
-    // if the incoming character is a newline, set a flag so the main loop can
-    // do something about it:
-    if (inChar == 'p') {
-      stringComplete = true;
-    }
-  }
-}
