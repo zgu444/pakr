@@ -9,7 +9,6 @@
 const int MPU=0x68;
 int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
 double pitch,roll,yaw;
-volatile bool stringComplete = false;
 
 #define TRIGGER_PIN_0 11
 #define ECHO_PIN_0 12
@@ -22,6 +21,8 @@ volatile bool stringComplete = false;
 
 #define SENSOR_NUM 4
 #define MAX_DISTANCE 200
+
+char readings[ (SENSOR_NUM+1) * sizeof(int) ];
 
 // NewPing setup of pins and maximum distance
 NewPing sonar_0(TRIGGER_PIN_0, ECHO_PIN_0, MAX_DISTANCE); 
@@ -80,7 +81,6 @@ void loop() {
   signed int roll_d = (unsigned int) roll;
   
   // needs revision
-  char *readings = (char*)malloc((SENSOR_NUM+1) * sizeof(int));
   sprintf(readings, "%u, %u, %u, %u, %i", distance_0, distance_1, distance_2, distance_3, roll_d);
   
   if (stringComplete) {
