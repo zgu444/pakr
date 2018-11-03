@@ -3,6 +3,7 @@ package com.example.myfirstapp.plot;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
@@ -59,9 +60,8 @@ public class VideoOverlayDemo extends View {
         Paint paint = new Paint();
         int width = getWidth();
         int height = getHeight();
+        int edge_offset = 30;
 
-        int x_center = width / 2;
-        int y_center = height / 2;
         float angle_ratio = ((float)-2.0)/((float)3.0);
 //        float wheelAngle = gyro.getVal()*angle_ratio;
         float wheelAngle = 0;
@@ -71,67 +71,52 @@ public class VideoOverlayDemo extends View {
         paint.setColor(Color.RED);
 
         if (wheelAngle > 0) {
-            float x_offset = height*(float) Math.tan(Math.toRadians(ANGLE_OFFSET));
-            double tan = Math.tan(Math.toRadians(wheelAngle));
-            float turn_radius = Math.round(CarConstants.CAR_LENGTH/tan-CarConstants.CAR_WIDTH/2);
-            float turn_center_x = x_center+turn_radius;
-            float turn_center_y = y_center+CarConstants.CAR_LENGTH/2;
+            float x_offset = height*(float) Math.tan(Math.toRadians(ANGLE_OFFSET+wheelAngle));
 
-            float upper_left_x_right = turn_center_x - turn_radius + CarConstants.CAR_WIDTH/2;
-            float upper_left_y_right = turn_center_y - turn_radius;
-            float arcAngle_right = Math.round(2*CarConstants.CAR_LENGTH/(2*turn_radius*Math.PI)*360);
-
-            float upper_left_x_left = turn_center_x - turn_radius -  CarConstants.CAR_WIDTH/2;
-            float upper_left_y_left = turn_center_y - turn_radius - CarConstants.CAR_WIDTH;
-            float arcAngle_left = Math.round(2*CarConstants.CAR_LENGTH/(2*(turn_radius+ CarConstants.CAR_WIDTH)*Math.PI)*360);
+            // Draw left curve
+            Path pleft = new Path();
+            pleft.moveTo(0+edge_offset, height);
+            curveTo(pleft,0+edge_offset, height,
+                    x_offset/8+edge_offset, height - height/4, x_offset*3/5+edge_offset, height/2);
+            canvas.drawPath(pleft, paint);
 
             // Draw right curve
-            Path pback = new Path();
-            pback.moveTo(0, height);
-            curveTo(pback,0, height,
-                    x_offset/2, height - height/4, x_offset, height/2);
-            canvas.drawPath(pback, paint);
+            Path pright = new Path();
+            pright.moveTo(width-edge_offset, height);
+            curveTo(pright,width-edge_offset, height,
+                    width - x_offset/8 - edge_offset, height - height/4, width-edge_offset, height/2);
+            canvas.drawPath(pright, paint);
 
-
-//            RectF rect_Right = new RectF(upper_left_x_right, upper_left_y_right, upper_left_x_right+2*turn_radius, upper_left_y_right+2*turn_radius);
-//            canvas.drawArc (rect_Right, 180, -arcAngle_right, false, paint);
-//
-//            // Draw left curve
-//            RectF rect_Left = new RectF(upper_left_x_left, upper_left_y_left, upper_left_x_left+2*(turn_radius+ CarConstants.CAR_WIDTH), upper_left_y_left+2*(turn_radius+ CarConstants.CAR_WIDTH));
-//            canvas.drawArc (rect_Left, 180, -arcAngle_left, false, paint);
+            canvas.drawLine(x_offset*3/5+edge_offset, height/2,width-edge_offset, height/2, paint );
         }
 
         else if (wheelAngle < 0) {
-            double tan = Math.tan(Math.toRadians(-wheelAngle));
-            float turn_radius = Math.round(CarConstants.CAR_LENGTH/tan-CarConstants.CAR_WIDTH/2);
-            float turn_center_x = x_center-turn_radius;
-            float turn_center_y = y_center+CarConstants.CAR_LENGTH/2;
-
-            float upper_left_x_left = turn_center_x - turn_radius - CarConstants.CAR_WIDTH/2;
-            float upper_left_y_left = turn_center_y - turn_radius;
-            float arcAngle_right = Math.round(2*CarConstants.CAR_LENGTH/(2*turn_radius*Math.PI)*360);
-
-            float upper_left_x_right = turn_center_x - turn_radius -  CarConstants.CAR_WIDTH*3/2;
-            float upper_left_y_right = turn_center_y - turn_radius - CarConstants.CAR_WIDTH;
-            float arcAngle_left = Math.round(2*CarConstants.CAR_LENGTH/(2*(turn_radius+ CarConstants.CAR_WIDTH)*Math.PI)*360);
-
-            // Draw right curve
-            RectF rect_Left = new RectF(upper_left_x_left, upper_left_y_left, upper_left_x_left+2*turn_radius, upper_left_y_left+2*turn_radius);
-            canvas.drawArc (rect_Left, 0, arcAngle_left, false, paint);
+            float x_offset = height*(float) Math.tan(Math.toRadians(ANGLE_OFFSET-wheelAngle));
 
             // Draw left curve
-            RectF rect_Right = new RectF(upper_left_x_right, upper_left_y_right, upper_left_x_right+2*(turn_radius+ CarConstants.CAR_WIDTH), upper_left_y_right+2*(turn_radius+ CarConstants.CAR_WIDTH));
-            canvas.drawArc (rect_Right, 0, arcAngle_right, false, paint);
+            Path pleft = new Path();
+            pleft.moveTo(0+edge_offset, height);
+            curveTo(pleft,0+edge_offset, height,
+                    x_offset/8 + edge_offset, height - height/4, edge_offset, height/2);
+            canvas.drawPath(pleft, paint);
+
+            // Draw right curve
+            Path pright = new Path();
+            pright.moveTo(width-edge_offset, height);
+            curveTo(pright,width-edge_offset, height,
+                    width - x_offset/8-edge_offset, height - height/4, width - (x_offset*3/5)-edge_offset, height/2);
+            canvas.drawPath(pright, paint);
+
+            canvas.drawLine(edge_offset, height/2, width - (x_offset*3/5)-edge_offset, height/2, paint);
 
         }
-
 
         // If wheels didn't turn, draw straight lines
         else {
             float x_offset = height*(float) Math.tan(Math.toRadians(ANGLE_OFFSET));
-            canvas.drawLine(x_offset/2, height/2, 0, height, paint);
-            canvas.drawLine(width-x_offset/2, height/2, width, height, paint);
-            canvas.drawLine(x_offset/2, height/2,width-x_offset/2, height/2, paint);
+            canvas.drawLine(x_offset/2+edge_offset, height/2, 0+edge_offset, height, paint);
+            canvas.drawLine(width-x_offset/2-edge_offset, height/2, width-edge_offset, height, paint);
+            canvas.drawLine(x_offset/2+edge_offset, height/2,width-x_offset/2-edge_offset, height/2, paint);
         }
 
 

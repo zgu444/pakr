@@ -2,5 +2,6 @@
     <string name="app_name">My First App</string>
     <string name="play">Play</string>
     <string name="mute">Mute</string>
+    <string name="fill">Fill</string>
     <string name="good_morning">Good Morning!</string>
 </resources>

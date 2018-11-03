@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.DashPathEffect;
-import android.hardware.Sensor;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -73,6 +72,7 @@ public class CarPlotDemo extends View {
     private ArrayList<SensorCoordinate> left_sensors, front_sensors, right_sensors, back_sensors;
     private SensorCoordinate gyro;
     private int x_center, y_center;
+    public boolean filled = false;
 
     private void curveTo(Path pth, int a, int b, int c, int d, int e, int f){
         pth.cubicTo((float)a,(float)b,(float)c,(float)d,(float)e,(float)f);
@@ -90,36 +90,34 @@ public class CarPlotDemo extends View {
 
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(5);
-        paint.setColor(Color.BLACK);
+        paint.setColor(Color.parseColor("#FF69B4"));
+        paint.setStyle(Paint.Style.FILL);
 
         int rectWidth = CarConstants.CAR_WIDTH;
         int rectHeight = CarConstants.CAR_LENGTH;
         int front = CarConstants.POINTY_LENGTH;
 
         // draw the car
-        // Draw the front and back curves
-        canvas.drawLine(x_center-rectWidth/2, y_center-rectHeight/2,
-                x_center, y_center-rectHeight/2-front, paint);
-        canvas.drawLine(x_center+rectWidth/2, y_center-rectHeight/2,
-                x_center, y_center-rectHeight/2-front, paint);
-
-        Path pback = new Path();
-        pback.moveTo(x_center-rectWidth/2, y_center+rectHeight/2);
-        curveTo(pback,x_center-rectWidth/2, y_center+rectHeight/2, x_center,
-                y_center+rectHeight/2 + 20, x_center+rectWidth/2, y_center+rectHeight/2);
-        canvas.drawPath(pback, paint);
-
-        // Draw 2 vertical lines
-        canvas.drawLine(x_center-rectWidth/2, y_center-rectHeight/2,
-                x_center-rectWidth/2, y_center+rectHeight/2, paint);
-        canvas.drawLine(x_center+rectWidth/2, y_center-rectHeight/2,
-                x_center+rectWidth/2, y_center+rectHeight/2, paint);
+        Path car = new Path();
+        car.moveTo(x_center-rectWidth/2, y_center-rectHeight/2);
+        car.lineTo(x_center, y_center-rectHeight/2-front);
+        car.lineTo(x_center+rectWidth/2, y_center-rectHeight/2);
+        car.lineTo(x_center+rectWidth/2, y_center+rectHeight/2);
+        car.cubicTo(x_center+rectWidth/2, y_center+rectHeight/2, x_center,
+                y_center+rectHeight/2 + 20, x_center-rectWidth/2, y_center+rectHeight/2);
+        car.lineTo(x_center-rectWidth/2, y_center-rectHeight/2);
+        canvas.drawPath(car, paint);
 
         // Draw outline on the left side of based on (x,y) of a sensor and its distance feedback
-        paint.setColor(Color.RED);
+        paint.setStyle(Paint.Style.STROKE);
+//        paint.setColor(Color.GRAY);
+
+        paint.setColor(Color.parseColor("#D3D3D3"));
 
         float left_end_x = -1;
         float left_end_y = -1;
+        float left_prev_sensor_x = -1;
+        float left_prev_sensor_y = -1;
 
         for (SensorCoordinate left_sensor : left_sensors) {
             float sensor_x = left_sensor.x_coord;
@@ -133,7 +131,16 @@ public class CarPlotDemo extends View {
             float start_angle = (float) 172.5;
 
             RectF rectF = new RectF(rect_left, rect_top, rect_right, rect_bottom);
-            canvas.drawArc (rectF, start_angle, SWEEP_ANGLE, false, paint);
+
+            if (filled) {
+                paint.setStyle(Paint.Style.FILL);
+                canvas.drawArc (rectF, start_angle, SWEEP_ANGLE, true, paint);
+            }
+            else {
+                canvas.drawArc (rectF, start_angle, SWEEP_ANGLE, false, paint);
+
+            }
+
 
             float half_angle = SWEEP_ANGLE/2;
             float triangle_top = sensor_distance*(float)Math.cos(Math.toRadians(half_angle));
@@ -143,8 +150,25 @@ public class CarPlotDemo extends View {
             // Find the coordinates of the start of the curve (top)
             float curve_start_x = sensor_x - triangle_bottom;
             float curve_start_y = sensor_y - triangle_side;
-            if (left_end_x >= 0 && left_end_y >= 0) {
-                canvas.drawLine(left_end_x, left_end_y, curve_start_x, curve_start_y, paint);
+
+            Path left_outline = new Path();
+
+            if (left_end_x >= 0 && left_end_y >= 0 && left_prev_sensor_x >=0 && left_prev_sensor_y >= 0) {
+                // fill mode
+                if (filled) {
+                    left_outline.moveTo(left_prev_sensor_x, left_prev_sensor_y);
+                    left_outline.lineTo(left_end_x, left_end_y);
+                    left_outline.lineTo(curve_start_x, curve_start_y);
+                    left_outline.lineTo(sensor_x, sensor_y);
+                    canvas.drawPath(left_outline, paint);
+                }
+
+                // contour mode
+                else{
+                    canvas.drawLine(left_end_x, left_end_y, curve_start_x, curve_start_y, paint);
+
+                }
+
             }
 
             // Find the coordinates of the end of the curve (bottom)
@@ -153,6 +177,8 @@ public class CarPlotDemo extends View {
 
             left_end_x = curve_end_x;
             left_end_y = curve_end_y;
+            left_prev_sensor_x = sensor_x;
+            left_prev_sensor_y = sensor_y;
         }
 
 
@@ -160,6 +186,8 @@ public class CarPlotDemo extends View {
 
         float right_end_x = -1;
         float right_end_y = -1;
+        float right_prev_sensor_x = -1;
+        float right_prev_sensor_y = -1;
 
         for (SensorCoordinate right_sensor : right_sensors) {
             float sensor_x = right_sensor.x_coord;
@@ -174,7 +202,16 @@ public class CarPlotDemo extends View {
             float start_angle = (float) -8.5;
 
             RectF rectF = new RectF(rect_left, rect_top, rect_right, rect_bottom);
-            canvas.drawArc (rectF, start_angle, SWEEP_ANGLE, false, paint);
+            if (filled) {
+                //filled mode
+                paint.setStyle(Paint.Style.FILL);
+                canvas.drawArc (rectF, start_angle, SWEEP_ANGLE, true, paint);
+            }
+            // contour mode
+            else {
+                canvas.drawArc (rectF, start_angle, SWEEP_ANGLE, false, paint);
+            }
+
 
             float half_angle = SWEEP_ANGLE/2;
             float triangle_top = sensor_distance*(float)Math.cos(Math.toRadians(half_angle));
@@ -185,8 +222,20 @@ public class CarPlotDemo extends View {
             float curve_start_x = sensor_x + triangle_bottom;
             float curve_start_y = sensor_y - triangle_side;
 
-            if (right_end_x >= 0 && right_end_y >= 0) {
-                canvas.drawLine(right_end_x, right_end_y, curve_start_x, curve_start_y, paint);
+            Path right_outline = new Path();
+
+            if (right_end_x >= 0 && right_end_y >= 0 && right_prev_sensor_x >=0 && right_prev_sensor_y >= 0) {
+                if (filled) {
+                    right_outline.moveTo(right_prev_sensor_x, right_prev_sensor_y);
+                    right_outline.lineTo(right_end_x, right_end_y);
+                    right_outline.lineTo(curve_start_x, curve_start_y);
+                    right_outline.lineTo(sensor_x, sensor_y);
+                    canvas.drawPath(right_outline, paint);
+                }
+
+                else {
+                    canvas.drawLine(right_end_x, right_end_y, curve_start_x, curve_start_y, paint);
+                }
             }
 
             // Find the coordinates of the end of the curve (bottom)
@@ -195,6 +244,8 @@ public class CarPlotDemo extends View {
 
             right_end_x = curve_end_x;
             right_end_y = curve_end_y;
+            right_prev_sensor_x = sensor_x;
+            right_prev_sensor_y = sensor_y;
         }
 
 
@@ -215,8 +266,18 @@ public class CarPlotDemo extends View {
 
             float start_angle = (float) 82.5;
 
+
             RectF rectF = new RectF(rect_left, rect_top, rect_right, rect_bottom);
-            canvas.drawArc (rectF, start_angle, SWEEP_ANGLE, false, paint);
+            if (filled) {
+                // filled mode
+                paint.setStyle(Paint.Style.FILL);
+                canvas.drawArc (rectF, start_angle, SWEEP_ANGLE, true, paint);
+            }
+            // contour mode
+            else {
+                canvas.drawArc (rectF, start_angle, SWEEP_ANGLE, false, paint);
+            }
+
 
             float half_angle = SWEEP_ANGLE/2;
             float triangle_top = sensor_distance*(float)Math.cos(Math.toRadians(half_angle));
@@ -243,6 +304,8 @@ public class CarPlotDemo extends View {
 
         float front_end_x = -1;
         float front_end_y = -1;
+        float front_prev_sensor_x = -1;
+        float front_prev_sensor_y = -1;
 
         for (SensorCoordinate front_sensor : front_sensors) {
             float sensor_x = front_sensor.x_coord;
@@ -263,7 +326,16 @@ public class CarPlotDemo extends View {
             }
 
             RectF rectF = new RectF(rect_left, rect_top, rect_right, rect_bottom);
-            canvas.drawArc (rectF, start_angle, -SWEEP_ANGLE, false, paint);
+
+            if (filled) {
+                // filled mode
+                paint.setStyle(Paint.Style.FILL);
+                canvas.drawArc (rectF, start_angle, -SWEEP_ANGLE, true, paint);
+            }
+            else {
+                canvas.drawArc (rectF, start_angle, -SWEEP_ANGLE, false, paint);
+            }
+
 
             float half_angle = SWEEP_ANGLE/2;
             float triangle_top = sensor_distance*(float)Math.cos(Math.toRadians(half_angle));
@@ -303,12 +375,28 @@ public class CarPlotDemo extends View {
             }
 
 
+            Path front_outline = new Path();
+
             if (front_end_x >= 0 && front_end_y >= 0) {
-                canvas.drawLine(front_end_x, front_end_y, curve_start_x, curve_start_y, paint);
+                if (filled) {
+                    // fill mode
+                    front_outline.moveTo(front_prev_sensor_x, front_prev_sensor_y);
+                    front_outline.lineTo(front_end_x, front_end_y);
+                    front_outline.lineTo(curve_start_x, curve_start_y);
+                    front_outline.lineTo(sensor_x, sensor_y);
+                    canvas.drawPath(front_outline, paint);
+                }
+
+                else {
+                    canvas.drawLine(front_end_x, front_end_y, curve_start_x, curve_start_y, paint);
+                }
+
             }
 
             front_end_x = curve_end_x;
             front_end_y = curve_end_y;
+            front_prev_sensor_x = sensor_x;
+            front_prev_sensor_y = sensor_y;
         }
 
 
@@ -320,10 +408,9 @@ public class CarPlotDemo extends View {
 
         // If wheel turns, draw arcs
         float angle_ratio = ((float)-2.0)/((float)3.0);
-        float wheelAngle = gyro.getVal()*angle_ratio;
-        Log.d("gyro", Float.toString(wheelAngle));
-//        float wheelAngle = -20;
-
+//        float wheelAngle = gyro.getVal()*angle_ratio;
+        float wheelAngle = 0;
+//        Log.d("gyro", Float.toString(wheelAngle));
 
         if (wheelAngle > 0) {
             double tan = Math.tan(Math.toRadians(wheelAngle));
