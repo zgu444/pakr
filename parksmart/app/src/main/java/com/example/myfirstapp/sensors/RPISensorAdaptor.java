@@ -154,7 +154,7 @@ public class RPISensorAdaptor extends AsyncTask<View, Void, Void> implements Sen
     protected Void doInBackground(View... views) {
          while(!this.isCancelled()){
             try {
-                Thread.sleep(100);
+                Thread.sleep(50);
                 refreshDistance();
                 for (View view : views) {
                     view.invalidate();
