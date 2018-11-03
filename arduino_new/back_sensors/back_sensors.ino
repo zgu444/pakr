@@ -17,7 +17,7 @@
 #define SENSOR_NUM 5
 #define MAX_DISTANCE 200
 
-volatile bool stringComplete = false;
+char readings[ (SENSOR_NUM+1) * 8 ];
 
 // NewPing setup of pins and maximum distance
 NewPing sonar_4(TRIGGER_PIN_4, ECHO_PIN_4, MAX_DISTANCE); 
@@ -31,18 +31,20 @@ void setup() {
 }
 
 void loop() {
-   unsigned int distance_4 = sonar_4.convert_cm(sonar_4.ping_median());
-   unsigned int distance_5 = sonar_5.convert_cm(sonar_5.ping_median());
-   unsigned int distance_6 = sonar_6.convert_cm(sonar_6.ping_median());
-   unsigned int distance_7 = sonar_7.convert_cm(sonar_7.ping_median());
-   unsigned int distance_8 = sonar_8.convert_cm(sonar_8.ping_median());
+    if (Serial.available() > 0){
 
-   char *readings = (char*)malloc((SENSOR_NUM+1) * sizeof(int));
-   sprintf(readings, "%u, %u, %u, %u, %u", distance_4, distance_5, distance_6, distance_7, distance_8);
-
-   char inChar = (char) Serial.read();
-    if (inChar == 'p') {
-      Serial.println(readings);
+     char inChar =  Serial.read();
+  //   Serial.println("????");
+      if (inChar == 'p') {
+        unsigned int distance_4 = sonar_4.convert_cm(sonar_4.ping_median(3));
+        unsigned int distance_5 = sonar_5.convert_cm(sonar_5.ping_median(3));
+        unsigned int distance_6 = sonar_6.convert_cm(sonar_6.ping_median(3));
+        unsigned int distance_7 = sonar_7.convert_cm(sonar_7.ping_median(3));
+        unsigned int distance_8 = sonar_8.convert_cm(sonar_8.ping_median(3));
+        sprintf(readings, "%u, %u, %u, %u, %u", distance_4, distance_5, distance_6, distance_7, distance_8);
+        Serial.println(readings);
+//        Serial.println("Here\n");
+      }
     }
 }
 
