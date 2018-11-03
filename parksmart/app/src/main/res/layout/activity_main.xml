@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
                 android:layout_marginRight="4dp"
-                android:text="@string/mute" />
+                android:text="@string/play" />
 
         </LinearLayout>
 
@@ -63,21 +63,29 @@
         </FrameLayout>
 
 
-        <view xmlns:android="http://schemas.android.com/apk/res/android"
-            class="com.example.myfirstapp.plot.CarPlotDemo"
-            android:id="@+id/carPlot"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="50px"
-            android:layout_weight="0.5"
-            tools:context=".MainActivity"/>
+            android:layout_height="wrap_content"
+            >
 
+            <view xmlns:android="http://schemas.android.com/apk/res/android"
+                class="com.example.myfirstapp.plot.CarPlotDemo"
+                android:id="@+id/carPlot"
+                android:layout_width="match_parent"
+                android:layout_height="800px"
+                android:layout_weight="0.5"
+                tools:context=".MainActivity"/>
 
-        <!--<VideoView-->
-            <!--android:id="@+id/videoView2"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--app:layout_constraintTop_toTopOf="parent"-->
-            <!--tools:layout_marginTop="10dp" />-->
+            <Button
+                android:id="@+id/fillButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_marginRight="4dp"
+                android:text="@string/fill"/>
+
+        </FrameLayout>
+
 
 
     </LinearLayout>

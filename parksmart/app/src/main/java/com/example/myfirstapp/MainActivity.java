@@ -22,6 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.myfirstapp.plot.CarPlotDemo;
 import com.example.myfirstapp.sensors.RPISensorAdaptor;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String KEY = "79393674363536526D3430416E5A316270474A6970655A76636D63755A57467A65575268636E64706269356C59584E356347786865575679567778576F502B6C3430566863336C4559584A33615735555A57467453584E55614756435A584E30514449774D54686C59584E35";
     private Boolean playing = false;
     private Boolean URIinit = false;
+    private Boolean filled = false;
     private RPISensorAdaptor my_rpi;
     @SuppressLint("NewApi")
     @Override
@@ -37,9 +39,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         final Button playButton = findViewById(R.id.playButton);
-
+        final Button fillButton = findViewById(R.id.fillButton);
         final TextView textV = findViewById(R.id.playStatus);
-
+        final CarPlotDemo carPlot = findViewById(R.id.carPlot);
         final TextureView textureView = findViewById(R.id.textureVideoMain);
         textureView.setOpaque(false);
         final EasyPlayerClient client = new EasyPlayerClient(this, KEY, textureView, null, null);
@@ -63,10 +65,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        View carPlot= findViewById(R.id.carPlot);
+        fillButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if (filled) {
+                    filled = false;
+                    fillButton.setText("Fill");
+                    carPlot.filled = false;
+                    carPlot.invalidate();
+                }
+                else{
+                    carPlot.filled = true;
+                    filled = true;
+                    fillButton.setText("Contour");
+                    carPlot.invalidate();
+
+                }
+            }
+        });
+
         View carPath = findViewById(R.id.videoOverlay);
 
-//        carPlot.setBackgroundDrawable();
         my_rpi = RPISensorAdaptor.get_rpiadaptor();
         my_rpi.execute(carPlot, carPath);
 
