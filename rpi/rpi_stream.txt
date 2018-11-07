@@ -25,10 +25,36 @@ raspivid -t 0 -h 720 -w 1080 -fps 25 -hf -b 2000000 -o - \
   | gst-launch-1.0 -v fdsrc ! h264parse ! gdppay \
   ! tcpserversink host=127.0.0.1 port=7272 &
 
-./test-launch "( tcpclientsrc host=127.0.0.1 port=7272 ! gdpdepay ! rtph264pay name=pay0 pt=96 )"
+/home/pi/src/gst-rtsp-server/examples/test-launch "( tcpclientsrc host=127.0.0.1 port=7272 ! gdpdepay ! rtph264pay name=pay0 pt=96 )"
 
   On RTSP player or on Android with RTSP Player:
 rtsp://PARKRPI.WV.CC.CMU.EDU:8554/test
 
   https://stackoverflow.com/questions/13744560/using-gstreamer-to-serve-rtsp-stream-working-example-sought
   <git chekcout remotes/origin/<gst-version> (1.12)>
+
+
+  raspivid -g 125 -t 0 -h 720 -w 1080 -fps 25 -hf -b 2000000 -o - \
+  | gst-launch-1.0 -v fdsrc ! h264parse ! gdppay \
+  ! tcpserversink host=127.0.0.1 port=7272 &
+
+raspivid -g 375 -t 0 -h 720 -w 1080 -fps 25 -hf -b 2000000 -o - \
+  | gst-launch-1.0 -v fdsrc ! h264parse ! gdppay \
+  ! tcpserversink host=127.0.0.1 port=7272 &
+
+raspivid -g 25 -t 0 -h 720 -w 1080 -fps 25 -hf -b 2000000 -o - \
+  | gst-launch-1.0 -v fdsrc ! h264parse ! gdppay \
+  ! tcpserversink host=127.0.0.1 port=7272 &
+
+raspivid -g 50 -t 0 -h 720 -w 1080 -fps 25 -hf -b 2000000 -o - \
+  | gst-launch-1.0 -v fdsrc ! h264parse ! gdppay \
+  ! tcpserversink host=127.0.0.1 port=7272 &
+
+
+raspivid -t 0 -h 720 -w 1080 -fps 25 -hf -pf main -b 2000000 -o - \
+  | gst-launch-1.0 -v fdsrc ! h264parse ! gdppay \
+  ! tcpserversink host=127.0.0.1 port=7272 &
+
+  raspivid -t 0 -h 720 -w 1080 -fps 25 -hf -pf baseline -b 2000000 -o - \
+  | gst-launch-1.0 -v fdsrc ! h264parse ! gdppay \
+  ! tcpserversink host=127.0.0.1 port=7272 &
