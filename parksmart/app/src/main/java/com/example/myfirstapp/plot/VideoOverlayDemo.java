@@ -63,8 +63,8 @@ public class VideoOverlayDemo extends View {
         int edge_offset = 30;
 
         float angle_ratio = ((float)-2.0)/((float)3.0);
-//        float wheelAngle = gyro.getVal()*angle_ratio;
-        float wheelAngle = 0;
+        float wheelAngle = gyro.getVal()*angle_ratio;
+//        float wheelAngle = 0;
 
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(20);

@@ -152,17 +152,11 @@ public class RPISensorAdaptor extends AsyncTask<View, Void, Void> implements Sen
 
     @Override
     protected Void doInBackground(View... views) {
-//         while(!this.isCancelled()){
-//            try {
-//                Thread.sleep(100);
-//                refreshDistance();
-//                for (View view : views) {
-//                    view.invalidate();
-//                }
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
+         while(!this.isCancelled()){
+             refreshDistance();
+
+
+        }
         return null;
     }
 

@@ -408,8 +408,7 @@ public class CarPlotDemo extends View {
 
         // If wheel turns, draw arcs
         float angle_ratio = ((float)-2.0)/((float)3.0);
-//        float wheelAngle = gyro.getVal()*angle_ratio;
-        float wheelAngle = 0;
+        float wheelAngle = gyro.getVal()*angle_ratio;
 //        Log.d("gyro", Float.toString(wheelAngle));
 
         if (wheelAngle > 0) {
