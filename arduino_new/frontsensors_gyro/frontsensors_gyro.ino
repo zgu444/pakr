@@ -61,11 +61,11 @@ void loop() {
       sonar[currentSensor].ping_timer(echoCheck); // Do the ping (processing continues, interrupt will call echoCheck to look for echo).
     }
   }
-  
+  Wire.begin();
   Wire.beginTransmission(MPU);
   Wire.write(0x3B);
-  Wire.endTransmission(false);
-  Wire.requestFrom(MPU,14,true);
+  int res = Wire.endTransmission(false);
+  if  (res == 0) Wire.requestFrom(MPU,14,true);
   
   int AcXoff,AcYoff,AcZoff,GyXoff,GyYoff,GyZoff;
   int temp,toff;
@@ -82,14 +82,14 @@ void loop() {
   GyZoff = 210;
   
   //read accel data
-  AcX=(Wire.read()<<8|Wire.read()) + AcXoff;
-  AcY=(Wire.read()<<8|Wire.read()) + AcYoff;
-  AcZ=(Wire.read()<<8|Wire.read()) + AcYoff;
+  if (Wire.available() ) AcX=(Wire.read()<<8|Wire.read()) + AcXoff;
+  if (Wire.available() ) AcY=(Wire.read()<<8|Wire.read()) + AcYoff;
+  if (Wire.available() ) AcZ=(Wire.read()<<8|Wire.read()) + AcYoff;
   
   //read gyro data
-  GyX=(Wire.read()<<8|Wire.read()) + GyXoff;
-  GyY=(Wire.read()<<8|Wire.read()) + GyYoff;
-  GyZ=(Wire.read()<<8|Wire.read()) + GyZoff;
+  if (Wire.available() ) GyX=(Wire.read()<<8|Wire.read()) + GyXoff;
+  if (Wire.available() ) GyY=(Wire.read()<<8|Wire.read()) + GyYoff;
+  if (Wire.available() ) GyZ=(Wire.read()<<8|Wire.read()) + GyZoff;
   
   //get pitch/roll
   getAngle(AcX,AcY,AcZ);
@@ -104,7 +104,9 @@ void oneSensorCycle() { // Sensor ping cycle complete, do something with the res
   // The following code would be replaced with your code that does something with the ping results.
     if (Serial.available() > 0){
     signed int roll_d = (unsigned int) roll;
-
+  for (int i = 0; i < SONAR_NUM; i++){
+    if (cm[i] == 0) cm[i] = MAX_DISTANCE;
+  }
      char inChar =  Serial.read();
   //   Serial.println("????");
       if (inChar == 'p') {
