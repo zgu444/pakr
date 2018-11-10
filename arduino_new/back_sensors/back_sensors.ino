@@ -64,6 +64,9 @@ void oneSensorCycle() { // Sensor ping cycle complete, do something with the res
 
      char inChar =  Serial.read();
   //   Serial.println("????");
+  for (int i = 0; i < SONAR_NUM; i++){
+    if (cm[i] == 0) cm[i] = MAX_DISTANCE;
+  }
       if (inChar == 'p') {
         sprintf(readings, "%u, %u, %u, %u, %u", 
         cm[0], cm[1], cm[2], cm[3], cm[4]);
