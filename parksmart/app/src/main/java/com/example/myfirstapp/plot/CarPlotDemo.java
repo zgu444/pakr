@@ -274,8 +274,8 @@ public class CarPlotDemo extends View {
 
         // Draw outline on the front of based on (x,y) of a sensor and its distance feedback
 
-        float front_end_x = -1;
-        float front_end_y = -1;
+        float front_end_x = -2147483648;
+        float front_end_y = -2147483648;
         float front_prev_sensor_x = -1;
         float front_prev_sensor_y = -1;
 
@@ -349,7 +349,7 @@ public class CarPlotDemo extends View {
 
             Path front_outline = new Path();
 
-            if (front_end_x >= 0 && front_end_y >= 0) {
+            if (front_end_x > -2147483648 && front_end_y > -2147483648) {
                 if (filled) {
                     // fill mode
                     front_outline.moveTo(front_prev_sensor_x, front_prev_sensor_y);
