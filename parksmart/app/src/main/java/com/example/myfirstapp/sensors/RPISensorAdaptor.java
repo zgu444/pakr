@@ -92,6 +92,12 @@ public class RPISensorAdaptor extends AsyncTask<View, Void, Void> implements Sen
                 center_x + CarConstants.BACK_X,
                 center_y + CarConstants.BACK_Y,
                 SensorType.BACK), 9);
+        // 10
+        addSensorCoordinate(new SensorCoordinate(
+                center_x,
+                center_y,
+                SensorType.PARK), 10);
+
     }
 
     private static RPISensorAdaptor create_rpiadaptor(int center_x, int center_y){
