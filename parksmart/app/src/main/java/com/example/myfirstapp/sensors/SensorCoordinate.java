@@ -14,6 +14,7 @@ public class SensorCoordinate {
     private volatile float cur_val;
     private volatile float incr_val;
     private volatile float prev_val;
+    private volatile int num_incr;
     private long prev_time;
     private long cur_time;
 
@@ -30,8 +31,10 @@ public class SensorCoordinate {
 
     public synchronized float getVal(){
         float ret_val;
-        if ((cur_val > prev_val && prev_val <= cur_val-incr_val) || (cur_val < prev_val && prev_val >= cur_val+incr_val))
-            ret_val = prev_val+incr_val;
+        if (num_incr > 0) {
+            ret_val = prev_val + incr_val;
+            num_incr --;
+        }
         else
             ret_val = cur_val;
         prev_val = ret_val;
@@ -46,6 +49,7 @@ public class SensorCoordinate {
         cur_time = System.currentTimeMillis();
 
         incr_val = (cur_val - prev_val)/((cur_time - prev_time)/CarConstants.REPLOT_SLEEP_TIME);
+        num_incr = (int) ((cur_time - prev_time)/CarConstants.REPLOT_SLEEP_TIME);
     }
 
 }
