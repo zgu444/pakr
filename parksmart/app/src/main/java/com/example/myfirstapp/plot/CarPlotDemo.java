@@ -74,10 +74,6 @@ public class CarPlotDemo extends View {
     private int x_center, y_center;
     public boolean filled = false;
 
-    private void curveTo(Path pth, int a, int b, int c, int d, int e, int f){
-        pth.cubicTo((float)a,(float)b,(float)c,(float)d,(float)e,(float)f);
-    }
-
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -85,6 +81,8 @@ public class CarPlotDemo extends View {
     }
 
     @Override protected void onDraw(Canvas canvas) {
+//        canvas.drawColor(Color.parseColor("#D3D3D3"));
+        canvas.drawColor(Color.GRAY);
         super.onDraw(canvas);
         Paint paint = new Paint();
 
@@ -110,9 +108,7 @@ public class CarPlotDemo extends View {
 
         // Draw outline on the left side of based on (x,y) of a sensor and its distance feedback
         paint.setStyle(Paint.Style.STROKE);
-//        paint.setColor(Color.GRAY);
-
-        paint.setColor(Color.parseColor("#D3D3D3"));
+        paint.setColor(Color.WHITE);
 
         float left_end_x = -1;
         float left_end_y = -1;
@@ -140,7 +136,6 @@ public class CarPlotDemo extends View {
                 canvas.drawArc (rectF, start_angle, SWEEP_ANGLE, false, paint);
 
             }
-
 
             float half_angle = SWEEP_ANGLE/2;
             float triangle_top = sensor_distance*(float)Math.cos(Math.toRadians(half_angle));
@@ -242,17 +237,14 @@ public class CarPlotDemo extends View {
             float curve_end_x = sensor_x + triangle_bottom;
             float curve_end_y = sensor_y + triangle_side;
 
-            right_end_x = curve_end_x;
-            right_end_y = curve_end_y;
+            right_end_x = curve_end_x-3;
+            right_end_y = curve_end_y-3;
             right_prev_sensor_x = sensor_x;
             right_prev_sensor_y = sensor_y;
         }
 
 
         // Draw outline on the back of based on (x,y) of a sensor and its distance feedback
-
-        float back_end_x = -1;
-        float back_end_y = -1;
 
         for (SensorCoordinate back_sensor : back_sensors) {
             float sensor_x = back_sensor.x_coord;
@@ -278,32 +270,12 @@ public class CarPlotDemo extends View {
                 canvas.drawArc (rectF, start_angle, SWEEP_ANGLE, false, paint);
             }
 
-
-            float half_angle = SWEEP_ANGLE/2;
-            float triangle_top = sensor_distance*(float)Math.cos(Math.toRadians(half_angle));
-            float triangle_bottom = triangle_top*(float)Math.cos(Math.toRadians(half_angle));
-            float triangle_side = triangle_top*(float)Math.sin(Math.toRadians(half_angle));
-
-            // find the coordinates of start of the curve (left)
-             float curve_start_x = sensor_x - triangle_side;
-             float curve_start_y = sensor_y + triangle_bottom;
-
-//            if (back_end_x >= 0 && back_end_y >= 0) {
-//                canvas.drawLine(back_end_x, back_end_y, curve_start_x, curve_start_y, paint);
-//            }
-
-            // Find the coordinates of the end of the curve (right)
-             float curve_end_x = sensor_x + triangle_side;
-             float curve_end_y = sensor_y + triangle_bottom;
-
-            back_end_x = curve_end_x;
-            back_end_y = curve_end_y;
         }
 
         // Draw outline on the front of based on (x,y) of a sensor and its distance feedback
 
-        float front_end_x = -1;
-        float front_end_y = -1;
+        float front_end_x = -2147483648;
+        float front_end_y = -2147483648;
         float front_prev_sensor_x = -1;
         float front_prev_sensor_y = -1;
 
@@ -377,7 +349,7 @@ public class CarPlotDemo extends View {
 
             Path front_outline = new Path();
 
-            if (front_end_x >= 0 && front_end_y >= 0) {
+            if (front_end_x > -2147483648 && front_end_y > -2147483648) {
                 if (filled) {
                     // fill mode
                     front_outline.moveTo(front_prev_sensor_x, front_prev_sensor_y);
@@ -408,9 +380,7 @@ public class CarPlotDemo extends View {
 
         // If wheel turns, draw arcs
         float angle_ratio = ((float)-2.0)/((float)3.0);
-//        float wheelAngle = gyro.getVal()*angle_ratio;
-        float wheelAngle = 0;
-//        Log.d("gyro", Float.toString(wheelAngle));
+        float wheelAngle = gyro.getVal()*angle_ratio;
 
         if (wheelAngle > 0) {
             double tan = Math.tan(Math.toRadians(wheelAngle));

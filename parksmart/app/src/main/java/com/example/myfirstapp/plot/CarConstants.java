@@ -10,6 +10,7 @@ public class CarConstants {
     public static final int SENSOR_MID = 67*RATIO;
     public static final int SENSOR_BACK_WHEEL = 112*RATIO;
 
+    public static final int REPLOT_SLEEP_TIME = 30;
     /**
      * All coordinates are with respect to the center of the car
      */

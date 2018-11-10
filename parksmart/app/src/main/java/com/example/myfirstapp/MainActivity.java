@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +24,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myfirstapp.plot.CarPlotDemo;
+import com.example.myfirstapp.plot.ReplotAsyncTask;
 import com.example.myfirstapp.sensors.RPISensorAdaptor;
 
 public class MainActivity extends AppCompatActivity {
@@ -87,7 +89,10 @@ public class MainActivity extends AppCompatActivity {
         View carPath = findViewById(R.id.videoOverlay);
 
         my_rpi = RPISensorAdaptor.get_rpiadaptor();
-        my_rpi.execute(carPlot, carPath);
+        my_rpi.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, carPlot, carPath);
+
+        ReplotAsyncTask replotAsync = new ReplotAsyncTask();
+        replotAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, carPlot, carPath);
 
 
     }

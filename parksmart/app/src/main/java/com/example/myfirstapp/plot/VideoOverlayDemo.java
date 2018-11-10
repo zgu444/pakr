@@ -21,6 +21,8 @@ import java.util.ArrayList;
 
 public class VideoOverlayDemo extends View {
     private static final int ANGLE_OFFSET = 30;
+    private static final int MAX_ANGLE = 20;
+    private static final float PLOT_RATIO = (float) (2.0/3.0);
     public VideoOverlayDemo(Context context){
         super(context);
     }
@@ -36,7 +38,7 @@ public class VideoOverlayDemo extends View {
     }
 
     private void curveTo(Path pth, float a, float b, float c, float d, float e, float f){
-        pth.cubicTo((float)a,(float)b,(float)c,(float)d,(float)e,(float)f);
+        pth.cubicTo(a,b,c,d,e,f);
     }
 
     private SensorCoordinate gyro;
@@ -63,60 +65,71 @@ public class VideoOverlayDemo extends View {
         int edge_offset = 30;
 
         float angle_ratio = ((float)-2.0)/((float)3.0);
-//        float wheelAngle = gyro.getVal()*angle_ratio;
-        float wheelAngle = 0;
+        float wheelAngle = gyro.getVal()*angle_ratio;
+
 
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(20);
         paint.setColor(Color.RED);
 
+        // Wheel turned to the right
         if (wheelAngle > 0) {
+            if (wheelAngle > MAX_ANGLE)
+            {
+                wheelAngle = 20;
+            }
+
             float x_offset = height*(float) Math.tan(Math.toRadians(ANGLE_OFFSET+wheelAngle));
 
             // Draw left curve
             Path pleft = new Path();
             pleft.moveTo(0+edge_offset, height);
             curveTo(pleft,0+edge_offset, height,
-                    x_offset/8+edge_offset, height - height/4, x_offset*3/5+edge_offset, height/2);
+                    x_offset/8+edge_offset, height - height/4, x_offset*3/5+edge_offset, height*PLOT_RATIO);
             canvas.drawPath(pleft, paint);
 
             // Draw right curve
             Path pright = new Path();
             pright.moveTo(width-edge_offset, height);
             curveTo(pright,width-edge_offset, height,
-                    width - x_offset/8 - edge_offset, height - height/4, width-edge_offset, height/2);
+                    width - x_offset/8 - edge_offset, height - height/4, width-edge_offset, height*PLOT_RATIO);
             canvas.drawPath(pright, paint);
 
-            canvas.drawLine(x_offset*3/5+edge_offset, height/2,width-edge_offset, height/2, paint );
+            canvas.drawLine(x_offset*3/5+edge_offset, height*PLOT_RATIO,width-edge_offset, height*PLOT_RATIO, paint);
         }
 
+        // Wheel turned to the left
         else if (wheelAngle < 0) {
+            if (wheelAngle < -MAX_ANGLE) {
+                wheelAngle = -20;
+            }
+
             float x_offset = height*(float) Math.tan(Math.toRadians(ANGLE_OFFSET-wheelAngle));
 
             // Draw left curve
             Path pleft = new Path();
             pleft.moveTo(0+edge_offset, height);
             curveTo(pleft,0+edge_offset, height,
-                    x_offset/8 + edge_offset, height - height/4, edge_offset, height/2);
+                    x_offset/8 + edge_offset, height - height/4, edge_offset, height*PLOT_RATIO);
             canvas.drawPath(pleft, paint);
 
             // Draw right curve
             Path pright = new Path();
             pright.moveTo(width-edge_offset, height);
             curveTo(pright,width-edge_offset, height,
-                    width - x_offset/8-edge_offset, height - height/4, width - (x_offset*3/5)-edge_offset, height/2);
+                    width - x_offset/8-edge_offset, height - height/4, width - (x_offset*3/5)-edge_offset, height*PLOT_RATIO);
             canvas.drawPath(pright, paint);
 
-            canvas.drawLine(edge_offset, height/2, width - (x_offset*3/5)-edge_offset, height/2, paint);
+            canvas.drawLine(edge_offset, height*PLOT_RATIO, width - (x_offset*3/5)-edge_offset, height*PLOT_RATIO, paint);
 
         }
 
         // If wheels didn't turn, draw straight lines
         else {
             float x_offset = height*(float) Math.tan(Math.toRadians(ANGLE_OFFSET));
-            canvas.drawLine(x_offset/2+edge_offset, height/2, 0+edge_offset, height, paint);
-            canvas.drawLine(width-x_offset/2-edge_offset, height/2, width-edge_offset, height, paint);
-            canvas.drawLine(x_offset/2+edge_offset, height/2,width-x_offset/2-edge_offset, height/2, paint);
+            canvas.drawLine(x_offset/2+edge_offset, height*PLOT_RATIO, 0+edge_offset, height, paint);
+            canvas.drawLine(width-x_offset/2-edge_offset, height*PLOT_RATIO, width-edge_offset, height, paint);
+            canvas.drawLine(x_offset/2+edge_offset, height*PLOT_RATIO,width-x_offset/2-edge_offset, height*PLOT_RATIO, paint);
         }
 
 
