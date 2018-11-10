@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 public class VideoOverlayDemo extends View {
     private static final int ANGLE_OFFSET = 30;
+    private static final int MAX_ANGLE = 20;
     private static final float PLOT_RATIO = (float) (2.0/3.0);
     public VideoOverlayDemo(Context context){
         super(context);
@@ -73,6 +74,11 @@ public class VideoOverlayDemo extends View {
 
         // Wheel turned to the right
         if (wheelAngle > 0) {
+            if (wheelAngle > MAX_ANGLE)
+            {
+                wheelAngle = 20;
+            }
+
             float x_offset = height*(float) Math.tan(Math.toRadians(ANGLE_OFFSET+wheelAngle));
 
             // Draw left curve
@@ -94,6 +100,10 @@ public class VideoOverlayDemo extends View {
 
         // Wheel turned to the left
         else if (wheelAngle < 0) {
+            if (wheelAngle < -MAX_ANGLE) {
+                wheelAngle = -20;
+            }
+
             float x_offset = height*(float) Math.tan(Math.toRadians(ANGLE_OFFSET-wheelAngle));
 
             // Draw left curve

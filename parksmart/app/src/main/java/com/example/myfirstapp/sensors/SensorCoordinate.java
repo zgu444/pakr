@@ -4,6 +4,9 @@ import android.util.Log;
 
 import com.example.myfirstapp.plot.CarConstants;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class SensorCoordinate {
     public float x_coord;
     public float y_coord;
@@ -18,13 +21,19 @@ public class SensorCoordinate {
         x_coord = x;
         y_coord = y;
         this.sensorType = sensorType;
+
         cur_val = 100;
         prev_val = 100;
         incr_val = 0;
     }
 
+
     public synchronized float getVal(){
-        float ret_val = prev_val+incr_val;
+        float ret_val;
+        if ((cur_val > prev_val && prev_val <= cur_val-incr_val) || (cur_val < prev_val && prev_val >= cur_val+incr_val))
+            ret_val = prev_val+incr_val;
+        else
+            ret_val = cur_val;
         prev_val = ret_val;
         return ret_val* CarConstants.RATIO;
     }

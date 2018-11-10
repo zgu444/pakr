@@ -81,7 +81,8 @@ public class CarPlotDemo extends View {
     }
 
     @Override protected void onDraw(Canvas canvas) {
-        canvas.drawColor(Color.parseColor("#D3D3D3"));
+//        canvas.drawColor(Color.parseColor("#D3D3D3"));
+        canvas.drawColor(Color.GRAY);
         super.onDraw(canvas);
         Paint paint = new Paint();
 
@@ -236,8 +237,8 @@ public class CarPlotDemo extends View {
             float curve_end_x = sensor_x + triangle_bottom;
             float curve_end_y = sensor_y + triangle_side;
 
-            right_end_x = curve_end_x;
-            right_end_y = curve_end_y;
+            right_end_x = curve_end_x-3;
+            right_end_y = curve_end_y-3;
             right_prev_sensor_x = sensor_x;
             right_prev_sensor_y = sensor_y;
         }

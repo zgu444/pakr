@@ -4,12 +4,13 @@ import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
-
 import com.example.myfirstapp.comm.SocketClient;
 import com.example.myfirstapp.plot.CarConstants;
-
-
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
 import java.net.ConnectException;
 import java.util.Arrays;
 
@@ -100,7 +101,6 @@ public class RPISensorAdaptor extends AsyncTask<View, Void, Void> implements Sen
     }
 
     private final SensorCoordinate[] sensors;
-    private SocketClient socket_client;
     private int size;
     private float x_center;
     private float y_center;
@@ -123,7 +123,6 @@ public class RPISensorAdaptor extends AsyncTask<View, Void, Void> implements Sen
     public int getSize(){
         return size;
     }
-
 
     public synchronized void refreshDistance(){
         try {
