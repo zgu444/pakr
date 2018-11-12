@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private Boolean playing = false;
     private Boolean URIinit = false;
     private Boolean filled = false;
+    private Boolean parkingStarted = false;
     private RPISensorAdaptor my_rpi;
     @SuppressLint("NewApi")
     @Override
@@ -42,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
 
         final Button playButton = findViewById(R.id.playButton);
         final Button fillButton = findViewById(R.id.fillButton);
+        final Button startParkButton = findViewById(R.id.startParkButton);
+        final Button endParkButton = findViewById(R.id.endParkButton);
+
         final TextView textV = findViewById(R.id.playStatus);
         final CarPlotDemo carPlot = findViewById(R.id.carPlot);
         final TextureView textureView = findViewById(R.id.textureVideoMain);
@@ -83,6 +87,28 @@ public class MainActivity extends AppCompatActivity {
                     carPlot.invalidate();
 
                 }
+            }
+        });
+
+        startParkButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if (parkingStarted) {
+                    startParkButton.setText("Restart Parking");
+                }
+                else{
+                    parkingStarted = true;
+                    startParkButton.setText("Restart Parking");
+
+                }
+            }
+        });
+
+        endParkButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                parkingStarted = false;
+                startParkButton.setText("Start Parking");
             }
         });
 

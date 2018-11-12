@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class VideoOverlayDemo extends View {
     private static final int ANGLE_OFFSET = 30;
-    private static final int MAX_ANGLE = 20;
+    private static final int MAX_ANGLE = 30;
     private static final float PLOT_RATIO = (float) (2.0/3.0);
     public VideoOverlayDemo(Context context){
         super(context);

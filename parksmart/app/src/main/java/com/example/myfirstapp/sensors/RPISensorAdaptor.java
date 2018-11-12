@@ -16,11 +16,12 @@ import java.util.Arrays;
 
 @SuppressLint("NewApi")
 public class RPISensorAdaptor extends AsyncTask<View, Void, Void> implements SensorAdaptor {
+    public static final int ARR_SIZE = 11;
     public static final int PORT_NUMBER = 18500;
     private static RPISensorAdaptor my_adaptor;
     public static RPISensorAdaptor get_rpiadaptor(){
         if (my_adaptor == null){
-            my_adaptor = new RPISensorAdaptor(10);
+            my_adaptor = new RPISensorAdaptor(ARR_SIZE);
             my_adaptor.populate_rpiadaptor(0,0);
         }
         return my_adaptor;
@@ -101,7 +102,7 @@ public class RPISensorAdaptor extends AsyncTask<View, Void, Void> implements Sen
     }
 
     private static RPISensorAdaptor create_rpiadaptor(int center_x, int center_y){
-        RPISensorAdaptor my_rpi = new RPISensorAdaptor(10);
+        RPISensorAdaptor my_rpi = new RPISensorAdaptor(ARR_SIZE);
         my_rpi.populate_rpiadaptor(center_x, center_y);
         return my_rpi;
     }
