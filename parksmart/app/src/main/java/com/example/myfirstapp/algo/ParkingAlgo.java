@@ -1,6 +1,9 @@
 package com.example.myfirstapp.algo;
 
-public class ParkingAlgo {
+import android.os.AsyncTask;
+import android.util.Log;
+
+public class ParkingAlgo{
     public enum ParkingState{
         IDLE, SEARCH, FULL_RIGHT, FULL_LEFT;
     }
@@ -9,6 +12,7 @@ public class ParkingAlgo {
     public ParkingAlgo(){
         current_state = ParkingState.IDLE;
     }
+
 
     public void startAlgo(){
         synchronized (current_state) {
@@ -59,7 +63,7 @@ public class ParkingAlgo {
      * Will give warnings when sensor readings are too close to the vehicle
      */
     private void idle(){
-
+        Log.d("ALGO", "Algo is in " + current_state.name() + "state");
     }
 
     /**

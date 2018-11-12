@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
+
+import com.example.myfirstapp.algo.ParkingAlgo;
 import com.example.myfirstapp.comm.SocketClient;
 import com.example.myfirstapp.plot.CarConstants;
 import java.io.IOException;
@@ -15,7 +17,7 @@ import java.net.ConnectException;
 import java.util.Arrays;
 
 @SuppressLint("NewApi")
-public class RPISensorAdaptor extends AsyncTask<View, Void, Void> implements SensorAdaptor {
+public class RPISensorAdaptor extends AsyncTask<ParkingAlgo, Void, Void> implements SensorAdaptor {
     public static final int PORT_NUMBER = 18500;
     private static RPISensorAdaptor my_adaptor;
     public static RPISensorAdaptor get_rpiadaptor(){
@@ -156,9 +158,12 @@ public class RPISensorAdaptor extends AsyncTask<View, Void, Void> implements Sen
     }
 
     @Override
-    protected Void doInBackground(View... views) {
+    protected Void doInBackground(ParkingAlgo... algos) {
          while(!this.isCancelled()){
              refreshDistance();
+             for (ParkingAlgo algo : algos) {
+                 algo.main_iteration();
+             }
          }
         return null;
     }
