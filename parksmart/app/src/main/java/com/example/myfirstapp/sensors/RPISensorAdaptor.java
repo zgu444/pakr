@@ -17,7 +17,7 @@ import java.net.ConnectException;
 import java.util.Arrays;
 
 @SuppressLint("NewApi")
-public class RPISensorAdaptor extends AsyncTask<ParkingAlgo, Void, Void> implements SensorAdaptor {
+public class RPISensorAdaptor extends AsyncTask<Void, Void, Void> implements SensorAdaptor {
     public static final int PORT_NUMBER = 18500;
     private static RPISensorAdaptor my_adaptor;
     public static RPISensorAdaptor get_rpiadaptor(){
@@ -158,12 +158,9 @@ public class RPISensorAdaptor extends AsyncTask<ParkingAlgo, Void, Void> impleme
     }
 
     @Override
-    protected Void doInBackground(ParkingAlgo... algos) {
+    protected Void doInBackground(Void... voids) {
          while(!this.isCancelled()){
              refreshDistance();
-             for (ParkingAlgo algo : algos) {
-                 algo.main_iteration();
-             }
          }
         return null;
     }

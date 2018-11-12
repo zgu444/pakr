@@ -91,10 +91,12 @@ public class MainActivity extends AppCompatActivity {
         ParkingAlgo myAlgo = new ParkingAlgo();
 
         my_rpi = RPISensorAdaptor.get_rpiadaptor();
-        my_rpi.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, myAlgo);
+        my_rpi.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         ReplotAsyncTask replotAsync = new ReplotAsyncTask();
         replotAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, carPlot, carPath);
+
+        myAlgo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
 
     }
