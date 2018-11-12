@@ -1,6 +1,9 @@
 package com.example.myfirstapp.algo;
 
-public class ParkingAlgo {
+import android.os.AsyncTask;
+import android.util.Log;
+
+public class ParkingAlgo extends AsyncTask<Void, Void, Void>{
     public enum ParkingState{
         IDLE, SEARCH, FULL_RIGHT, FULL_LEFT;
     }
@@ -9,6 +12,33 @@ public class ParkingAlgo {
     public ParkingAlgo(){
         current_state = ParkingState.IDLE;
     }
+
+    /**
+     * Override this method to perform a computation on a background thread. The
+     * specified parameters are the parameters passed to {@link #execute}
+     * by the caller of this task.
+     * <p>
+     * This method can call {@link #publishProgress} to publish updates
+     * on the UI thread.
+     *
+     * @param voids The parameters of the task.
+     * @return A result, defined by the subclass of this task.
+     * @see #onPreExecute()
+     * @see #onPostExecute
+     * @see #publishProgress
+     */
+    @Override
+    protected Void doInBackground(Void... voids) {
+        while(!isCancelled()){
+            try {
+                Thread.sleep(100);
+                main_iteration();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     public void startAlgo(){
         synchronized (current_state) {
@@ -59,7 +89,7 @@ public class ParkingAlgo {
      * Will give warnings when sensor readings are too close to the vehicle
      */
     private void idle(){
-
+        Log.d("ALGO", "Algo is in " + current_state.name() + "state");
     }
 
     /**

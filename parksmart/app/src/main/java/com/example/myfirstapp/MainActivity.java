@@ -23,6 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.myfirstapp.algo.ParkingAlgo;
 import com.example.myfirstapp.plot.CarPlotDemo;
 import com.example.myfirstapp.plot.ReplotAsyncTask;
 import com.example.myfirstapp.sensors.RPISensorAdaptor;
@@ -113,12 +114,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         View carPath = findViewById(R.id.videoOverlay);
+        ParkingAlgo myAlgo = new ParkingAlgo();
 
         my_rpi = RPISensorAdaptor.get_rpiadaptor();
-        my_rpi.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, carPlot, carPath);
+        my_rpi.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         ReplotAsyncTask replotAsync = new ReplotAsyncTask();
         replotAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, carPlot, carPath);
+
+        myAlgo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
 
     }

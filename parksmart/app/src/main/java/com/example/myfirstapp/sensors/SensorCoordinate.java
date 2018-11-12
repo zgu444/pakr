@@ -11,6 +11,7 @@ public class SensorCoordinate {
     public float x_coord;
     public float y_coord;
     public final SensorType sensorType;
+    private final Object cur_val_lock;
     private volatile float cur_val;
     private volatile float incr_val;
     private volatile float prev_val;
@@ -22,7 +23,7 @@ public class SensorCoordinate {
         x_coord = x;
         y_coord = y;
         this.sensorType = sensorType;
-
+        cur_val_lock = new Integer(1);
         cur_val = 100;
         prev_val = 100;
         incr_val = 0;
@@ -36,7 +37,7 @@ public class SensorCoordinate {
             num_incr --;
         }
         else
-            ret_val = cur_val;
+            ret_val = prev_val;
         prev_val = ret_val;
         return ret_val* CarConstants.RATIO;
     }
@@ -44,7 +45,9 @@ public class SensorCoordinate {
     public synchronized void setVal(float new_val){
         Log.d("setval", String.valueOf(new_val));
         prev_val = cur_val;
-        cur_val = new_val;
+        synchronized (cur_val_lock) {
+            cur_val = new_val;
+        }
         prev_time = cur_time;
         cur_time = System.currentTimeMillis();
 
@@ -52,4 +55,11 @@ public class SensorCoordinate {
         num_incr = (int) ((cur_time - prev_time)/CarConstants.REPLOT_SLEEP_TIME);
     }
 
+    public float getRaw(){
+        float ret_val;
+        synchronized(cur_val_lock) {
+            ret_val= cur_val;
+        }
+        return ret_val;
+    }
 }
