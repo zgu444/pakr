@@ -3,14 +3,28 @@ package com.example.myfirstapp.algo;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.myfirstapp.sensors.SensorCoordinate;
+
+import java.util.ArrayList;
+
 public class ParkingAlgo extends AsyncTask<Void, Void, Void>{
     public enum ParkingState{
         IDLE, SEARCH, FULL_RIGHT, FULL_LEFT;
     }
+
+    //requires synchronization in async task
     private ParkingState current_state;
+    private final ArrayList<SensorCoordinate> left_sensors, front_sensors, right_sensors, back_sensors;
+    private final ArrayList<SensorCoordinate> parking_sensors;
 
     public ParkingAlgo(){
         current_state = ParkingState.IDLE;
+        front_sensors = new ArrayList<SensorCoordinate>();
+        left_sensors = new ArrayList<SensorCoordinate>();
+
+        right_sensors = new ArrayList<SensorCoordinate>();
+        back_sensors = new ArrayList<SensorCoordinate>();
+        parking_sensors = new ArrayList<>();
     }
 
     /**
@@ -66,21 +80,23 @@ public class ParkingAlgo extends AsyncTask<Void, Void, Void>{
      * while(true) main_iteration();
      */
     public void main_iteration(){
+        ParkingState myState;
         synchronized (current_state){
-            switch (current_state){
-                case IDLE:
-                    idle();
-                    break;
-                case SEARCH:
-                    search_parallel();
-                    break;
-                case FULL_RIGHT:
-                    reverse_right();
-                    break;
-                case FULL_LEFT:
-                    reverse_left();
-                    break;
-            }
+            myState = current_state;
+        }
+        switch (myState){
+            case IDLE:
+                idle();
+                break;
+            case SEARCH:
+                search_parallel();
+                break;
+            case FULL_RIGHT:
+                reverse_right();
+                break;
+            case FULL_LEFT:
+                reverse_left();
+                break;
         }
     }
 
