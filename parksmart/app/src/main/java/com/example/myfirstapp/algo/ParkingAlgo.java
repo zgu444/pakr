@@ -61,8 +61,10 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
     @Override
     protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
-        for (String s: values)
+        for (String s: values) {
             debugConsole.log(s);
+            Log.d("ALGO", s);
+        }
     }
 
     @Override
@@ -162,18 +164,58 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
      */
     private void search_parallel(){
         publishProgress("I'm in search state");
-        float distanceFromRight = parking_sensors.get(0).getRaw();
-        float front_wheel_distance = right_sensors.get(0).getRaw();
-        float mid_wheel_distance = right_sensors.get(1).getRaw();
-        float back_wheel_distance = right_sensors.get(2).getRaw();
+        float end = parking_sensors.get(0).getRaw();
+        float front = right_sensors.get(0).getRaw();
+        float mid = right_sensors.get(1).getRaw();
+        float back = right_sensors.get(2).getRaw();
 
+        withinSightCheck(front, mid, back, end);
+
+
+    }
+
+    private void distanceAngleCheck(float front, float mid, float back, float end){
+
+    }
+
+    private void withinSightCheck(float front, float mid, float back, float end){
         //first whether vehicle is in sight
-        if (isOutOfSight(front_wheel_distance) && isOutOfSight(mid_wheel_distance)
-                && isOutOfSight(back_wheel_distance) && isOutOfSight(distanceFromRight)){
+        if (isOutOfSight(front) && isOutOfSight(mid)
+                && isOutOfSight(back) && isOutOfSight(end)){
             publishProgress("The reference vehicle is completely out of sight. Pull forward or go back");
+            return;
         }
-
-
+        //partially in sight
+        if (!isOutOfSight(front) && isOutOfSight(mid)
+                && isOutOfSight(back) && isOutOfSight(end)) {
+            publishProgress("Front wheel sees reference vehicle, pull forward slowly");
+        }
+        if (!isOutOfSight(front) && !isOutOfSight(mid)
+                && isOutOfSight(back) && isOutOfSight(end)) {
+            publishProgress("Front & mid wheel sees reference vehicle, pull forward slowly");
+        }
+        if (!isOutOfSight(front) && !isOutOfSight(mid)
+                && !isOutOfSight(back) && isOutOfSight(end)) {
+            publishProgress("We see the reference vehicle, pull forward very slowly");
+        }
+        //ideal position
+        if (!isOutOfSight(front) && !isOutOfSight(mid)
+                && !isOutOfSight(back) && !isOutOfSight(end)) {
+            publishProgress("We have reached the ideal y position.");
+        }
+        //partially in sight in the other direction
+        if (isOutOfSight(front) && !isOutOfSight(mid)
+                && !isOutOfSight(back) && !isOutOfSight(end)) {
+            publishProgress("Front wheel passed reference vehicle, go backwards slowly");
+        }
+        if (isOutOfSight(front) && isOutOfSight(mid)
+                && !isOutOfSight(back) && !isOutOfSight(end)) {
+            publishProgress("Front & mid wheel passed reference vehicle, go backwards slowly");
+        }
+        if (isOutOfSight(front) && isOutOfSight(mid)
+                && isOutOfSight(back) && !isOutOfSight(end)) {
+            publishProgress("Most of car passed the reference vehicle, go backwards slowly");
+        }
     }
 
     /**
