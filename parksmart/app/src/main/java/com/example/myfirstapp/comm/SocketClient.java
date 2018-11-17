@@ -26,13 +26,6 @@ public class SocketClient{
         socket = openSocket(server_name, port);
         if (socket == null) throw new IOException();
 
-        // write-to, and read-from the socket.
-        // in this case just write a simple command to a web server.
-//            String result = writeToAndReadFromSocket(socket, "GET /\n\n");
-
-        // print out the result we got back from the server
-        //System.out.println(result);
-        Log.d("socket", "connected to "+server_name);
         // close the socket, and we're done
 
     }

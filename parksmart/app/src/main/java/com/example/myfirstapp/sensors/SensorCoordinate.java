@@ -43,7 +43,6 @@ public class SensorCoordinate {
     }
 
     public synchronized void setVal(float new_val){
-        Log.d("setval", String.valueOf(new_val));
         prev_val = cur_val;
         synchronized (cur_val_lock) {
             cur_val = new_val;
