@@ -23,6 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.myfirstapp.algo.OverlayConsole;
 import com.example.myfirstapp.algo.ParkingAlgo;
 import com.example.myfirstapp.plot.CarPlotDemo;
 import com.example.myfirstapp.plot.ReplotAsyncTask;
@@ -91,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        final ParkingAlgo myAlgo = new ParkingAlgo(new OverlayConsole((TextView) findViewById(R.id.debugText)));
+
         startParkButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -102,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     startParkButton.setText("Restart Parking");
 
                 }
+                myAlgo.startAlgo();
             }
         });
 
@@ -110,17 +114,20 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v){
                 parkingStarted = false;
                 startParkButton.setText("Start Parking");
+                myAlgo.endAlgo();
             }
+
         });
 
         View carPath = findViewById(R.id.videoOverlay);
-        ParkingAlgo myAlgo = new ParkingAlgo();
 
         my_rpi = RPISensorAdaptor.get_rpiadaptor();
         my_rpi.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         ReplotAsyncTask replotAsync = new ReplotAsyncTask();
         replotAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, carPlot, carPath);
+
+
         myAlgo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
 

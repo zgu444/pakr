@@ -61,6 +61,14 @@
                 android:id="@+id/videoOverlay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/debugText"
+                android:gravity = "bottom"
+                android:textSize="14sp"
+                android:singleLine="true"
+                android:textColor="#FFFFFF"/>
         </FrameLayout>
 
 
@@ -75,6 +83,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="800px"
                 android:layout_weight="0.5"
+                android:maxLines="10"
+                android:lines="10"
                 tools:context=".MainActivity"/>
 
             <LinearLayout

@@ -2,16 +2,17 @@ package com.example.myfirstapp.algo;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.example.myfirstapp.sensors.RPISensorAdaptor;
 import com.example.myfirstapp.sensors.SensorCoordinate;
 
 import java.util.ArrayList;
 
-public class ParkingAlgo extends AsyncTask<Void, Void, Void>{
+public class ParkingAlgo extends AsyncTask<Void, String, Void>{
 
 
-    public static final int ALGO_SLEEP_TIME = 60;
+    public static final int ALGO_SLEEP_TIME = 500;
 
     public enum ParkingState{
         IDLE, SEARCH, FULL_RIGHT, FULL_LEFT;
@@ -22,8 +23,9 @@ public class ParkingAlgo extends AsyncTask<Void, Void, Void>{
     private final ArrayList<SensorCoordinate> left_sensors, front_sensors, right_sensors, back_sensors;
     private final ArrayList<SensorCoordinate> parking_sensors;
     private SensorCoordinate gyro;
+    private final OverlayConsole debugConsole;
 
-    public ParkingAlgo(){
+    public ParkingAlgo(OverlayConsole debugConsole){
         current_state = ParkingState.IDLE;
         front_sensors = new ArrayList<SensorCoordinate>();
         left_sensors = new ArrayList<SensorCoordinate>();
@@ -31,6 +33,40 @@ public class ParkingAlgo extends AsyncTask<Void, Void, Void>{
         right_sensors = new ArrayList<SensorCoordinate>();
         back_sensors = new ArrayList<SensorCoordinate>();
         parking_sensors = new ArrayList<>();
+        this.debugConsole = debugConsole;
+
+    }
+
+    /*
+    Helper methods that define the constant ranges
+     */
+    private boolean isTooClose(float distance){
+        return distance <= 35;
+    }
+
+    private boolean isInRange(float distance){
+        return distance > 35 && distance <= 44;
+    }
+
+    private boolean isTooFar(float distance){
+        return distance > 44 && distance <= 85;
+    }
+
+    private boolean isOutOfSight(float distance){
+        return distance > 85;
+    }
+
+
+
+    @Override
+    protected void onProgressUpdate(String... values) {
+        super.onProgressUpdate(values);
+        for (String s: values)
+            debugConsole.log(s);
+    }
+
+    @Override
+    protected Void doInBackground(Void... voids) {
         RPISensorAdaptor myAdaptor = null;
         while (myAdaptor == null)
             myAdaptor = RPISensorAdaptor.get_adaptor_no_create();
@@ -59,29 +95,11 @@ public class ParkingAlgo extends AsyncTask<Void, Void, Void>{
                     break;
             }
         }
-
-    }
-
-    /**
-     * Override this method to perform a computation on a background thread. The
-     * specified parameters are the parameters passed to {@link #execute}
-     * by the caller of this task.
-     * <p>
-     * This method can call {@link #publishProgress} to publish updates
-     * on the UI thread.
-     *
-     * @param voids The parameters of the task.
-     * @return A result, defined by the subclass of this task.
-     * @see #onPreExecute()
-     * @see #onPostExecute
-     * @see #publishProgress
-     */
-    @Override
-    protected Void doInBackground(Void... voids) {
         while(!isCancelled()){
             try {
-                Thread.sleep(ALGO_SLEEP_TIME);
                 main_iteration();
+
+                Thread.sleep(ALGO_SLEEP_TIME);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -91,7 +109,6 @@ public class ParkingAlgo extends AsyncTask<Void, Void, Void>{
 
 
     public void startAlgo(){
-        synchronized (current_state) {
             switch (current_state) {
                 case IDLE:
                     current_state = ParkingState.SEARCH;
@@ -102,13 +119,12 @@ public class ParkingAlgo extends AsyncTask<Void, Void, Void>{
                     current_state = ParkingState.SEARCH;
 
             }
-        }
+
     }
 
     public void endAlgo(){
-        synchronized (current_state) {
             current_state = ParkingState.IDLE;
-        }
+
     }
 
     /**
@@ -116,24 +132,8 @@ public class ParkingAlgo extends AsyncTask<Void, Void, Void>{
      * while(true) main_iteration();
      */
     public void main_iteration(){
-        ParkingState myState = ParkingState.IDLE;
-        synchronized (current_state){
-            switch (current_state){
-                case IDLE:
-                    myState = ParkingState.IDLE;
-                    break;
-                case SEARCH:
-                    myState = ParkingState.SEARCH;
-                    break;
-                case FULL_RIGHT:
-                    myState = ParkingState.FULL_RIGHT;
-                    break;
-                case FULL_LEFT:
-                    myState = ParkingState.FULL_LEFT;
-                    break;
-            }
-        }
-        switch (myState){
+        debugConsole.clear_history();
+        switch (current_state){
             case IDLE:
                 idle();
                 break;
@@ -154,34 +154,23 @@ public class ParkingAlgo extends AsyncTask<Void, Void, Void>{
      * Will give warnings when sensor readings are too close to the vehicle
      */
     private void idle(){
-        Log.d("ALGO", "Algo is in " + current_state.name() + "state");
+        publishProgress("IDLE state");
     }
 
     /**
      * State will change if the back parking sensor is within 18~22 cm to the vehicle next to us
      */
     private void search_parallel(){
-        Log.d("Search State", "I'm in search state");
+        publishProgress("I'm in search state");
         float distanceFromRight = parking_sensors.get(0).getRaw();
         float front_wheel_distance = right_sensors.get(0).getRaw();
-        if (front_wheel_distance <= 44 && front_wheel_distance >= 38
-                && distanceFromRight <= 44 && distanceFromRight >= 38){
-            Log.d("Search State", "correct position has been seen, switch to reverse_right state");
-//            synchronized (current_state){
-//                current_state = ParkingState.FULL_RIGHT;
-//            }
-        }else if (front_wheel_distance <= 80 && distanceFromRight >45 && distanceFromRight <= 80) {
-            Log.d("Search State", "Too far from car");
-        }else if (front_wheel_distance <= 80 && distanceFromRight < 38){
-            Log.d("Search State", "Too close from car");
-        }else {
-            if (distanceFromRight > 80){
-                if (front_wheel_distance > 80){
-                    Log.d("Search State", "keep pulling forward");
-                }else {
-                    Log.d("Search State", "Front wheel sees car, slow down and keep pulling forward");
-                }
-            }
+        float mid_wheel_distance = right_sensors.get(1).getRaw();
+        float back_wheel_distance = right_sensors.get(2).getRaw();
+
+        //first whether vehicle is in sight
+        if (isOutOfSight(front_wheel_distance) && isOutOfSight(mid_wheel_distance)
+                && isOutOfSight(back_wheel_distance) && isOutOfSight(distanceFromRight)){
+            publishProgress("The reference vehicle is completely out of sight. Pull forward or go back");
         }
 
 
@@ -200,6 +189,7 @@ public class ParkingAlgo extends AsyncTask<Void, Void, Void>{
     private void reverse_left(){
 
     }
+
 
 
 }
