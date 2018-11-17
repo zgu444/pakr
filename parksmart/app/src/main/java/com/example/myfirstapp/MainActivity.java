@@ -6,6 +6,7 @@ import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -40,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //start service and play music
+        startService(new Intent(MainActivity.this, SoundService.class));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -53,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         final TextureView textureView = findViewById(R.id.textureVideoMain);
         textureView.setOpaque(false);
         final EasyPlayerClient client = new EasyPlayerClient(this, KEY, textureView, null, null);
+
 
 
         playButton.setOnClickListener(new View.OnClickListener(){
