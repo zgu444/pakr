@@ -121,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
 
         ReplotAsyncTask replotAsync = new ReplotAsyncTask();
         replotAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, carPlot, carPath);
-
         myAlgo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
 
