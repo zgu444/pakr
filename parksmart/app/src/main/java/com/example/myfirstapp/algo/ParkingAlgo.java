@@ -10,8 +10,6 @@ import com.example.myfirstapp.sensors.SensorCoordinate;
 import java.util.ArrayList;
 
 public class ParkingAlgo extends AsyncTask<Void, String, Void>{
-
-
     public static final int ALGO_SLEEP_TIME = 500;
 
     public enum ParkingState{
@@ -19,7 +17,7 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
     }
 
     //requires synchronization in async task
-    private ParkingState current_state;
+    public ParkingState current_state;
     private final ArrayList<SensorCoordinate> left_sensors, front_sensors, right_sensors, back_sensors;
     private final ArrayList<SensorCoordinate> parking_sensors;
     private SensorCoordinate gyro;
