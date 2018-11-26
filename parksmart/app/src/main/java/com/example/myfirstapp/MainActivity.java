@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
     private AudioManager audioManager;
     private static final int MAX_STREAMS = 5;
     private static final int streamType = AudioManager.STREAM_MUSIC;
-
     private boolean loaded;
     private int soundIdDestroy;
     private int soundIdGun;
@@ -66,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         final Button startParkButton = findViewById(R.id.startParkButton);
         final Button endParkButton = findViewById(R.id.endParkButton);
 
-        final TextView textV = findViewById(R.id.playStatus);
+//        final TextView textV = findViewById(R.id.playStatus);
         final CarPlotDemo carPlot = findViewById(R.id.carPlot);
         final TextureView textureView = findViewById(R.id.textureVideoMain);
 
@@ -74,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         final EasyPlayerClient client = new EasyPlayerClient(this, KEY, textureView, null, null);
 
 
+        // audiopool setup
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         float currentVolumeIndex = (float) audioManager.getStreamVolume(streamType);
         float maxVolumeIndex  = (float) audioManager.getStreamMaxVolume(streamType);
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 if (playing){
                     client.stop();
                     playing = false;
-                    textV.setText("Not Playing");
+//                    textV.setText("Not Playing");
                     playButton.setText("Play");
 
                     if(loaded)  {
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                 else{
                     client.play(RTSP_ADDR);
                     playing = true;
-                    textV.setText("Playing");
+//                    textV.setText("Playing");
                     playButton.setText("Pause");
                 }
             }
