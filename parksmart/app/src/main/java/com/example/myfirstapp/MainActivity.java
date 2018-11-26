@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -144,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final ParkingAlgo myAlgo = new ParkingAlgo(new OverlayConsole((TextView) findViewById(R.id.debugText)));
+        final ParkingAlgo myAlgo = new ParkingAlgo(new OverlayConsole((EditText) findViewById(R.id.debugText)));
 
         startParkButton.setOnClickListener(new View.OnClickListener(){
             @Override

@@ -133,7 +133,7 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
      * while(true) main_iteration();
      */
     public void main_iteration(){
-        debugConsole.clear_history();
+//        debugConsole.clear_history();
         switch (current_state){
             case IDLE:
                 idle();
