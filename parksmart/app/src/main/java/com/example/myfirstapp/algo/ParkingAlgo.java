@@ -132,7 +132,6 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
      * while(true) main_iteration();
      */
     public void main_iteration(){
-        //debugConsole.clear_history();
         switch (current_state){
             case IDLE:
                 idle();
@@ -160,7 +159,11 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         RESET, OUT_OF_SIGHT, MID_BACK_OUT, BACK_END_OUT, END_OUT,
         PARALLEL, FRONT_OUT, FRONT_MID_OUT, FRONT_MID_BACK_OUT
     }
+    private enum DistanceStates{
+        RESET, TOO_FAR, IN_RANGE, TOO_CLOSE
+    }
     private ParallelStates parallel_status_flag = ParallelStates.RESET;
+    private DistanceStates distance_status_flag = DistanceStates.RESET;
 
     /**
      * State will change if the back parking sensor is within 18~22 cm to the vehicle next to us
@@ -173,12 +176,46 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         float back = right_sensors.get(2).getRaw();
 
         withinSightCheck(front, mid, back, end);
+        distanceAngleCheck(front, mid, back, end);
+
+        if (parallel_status_flag == ParallelStates.PARALLEL
+                && distance_status_flag == DistanceStates.IN_RANGE){
+            current_state = ParkingState.FULL_RIGHT;
+            publishProgress("That's a good parallel spot! Entering reverse state");
+            /**
+             * Insert instruction for reverse right here!!
+             */
+        }
 
 
     }
 
     private void distanceAngleCheck(float front, float mid, float back, float end){
-
+        if (parallel_status_flag == ParallelStates.RESET ||
+                parallel_status_flag == ParallelStates.OUT_OF_SIGHT){
+            return;
+        }
+        if (isTooClose(front) || isTooClose(mid) || isTooClose(back) || isTooClose(end)){
+            if (distance_status_flag != DistanceStates.TOO_CLOSE){
+                publishProgress("Some part of the vehicle is too close to the reference car");
+                distance_status_flag = DistanceStates.TOO_CLOSE;
+            }
+            return;
+        }
+        if (isTooFar(front) || isTooFar(mid) || isTooFar(back) || isTooFar(end)){
+            if (distance_status_flag != DistanceStates.TOO_FAR){
+                publishProgress("Some part of the vehicle is too far to the reference car");
+                distance_status_flag = DistanceStates.TOO_FAR;
+            }
+            return;
+        }
+        if (isInRange(end)){
+            if (distance_status_flag != DistanceStates.IN_RANGE){
+                publishProgress("the distance on the right is good");
+                distance_status_flag = DistanceStates.IN_RANGE;
+            }
+            return;
+        }
     }
 
     private void withinSightCheck(float front, float mid, float back, float end){
@@ -256,6 +293,12 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
      * Full right & reverse until right-front sensor reports large distance
      */
     private void reverse_right(){
+        float front = right_sensors.get(0).getRaw();
+        if (front >= 200){
+            current_state = ParkingState.FULL_LEFT;
+            publishProgress("Entering reverse left");
+        }
+
 
     }
 
@@ -263,6 +306,11 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
      * Reverse left until within 20 of the back obstacle
      */
     private void reverse_left(){
+        float rear = back_sensors.get(0).getRaw();
+        if (rear <= 20){
+            current_state = ParkingState.IDLE;
+            publishProgress("Done! Stop!");
+        }
 
     }
 
