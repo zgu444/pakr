@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
     private AudioManager audioManager;
     private static final int MAX_STREAMS = 5;
     private static final int streamType = AudioManager.STREAM_MUSIC;
-
     private boolean loaded;
     private int soundIdDestroy;
     private int soundIdGun;
@@ -73,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         final EasyPlayerClient client = new EasyPlayerClient(this, KEY, textureView, null, null);
 
 
+        // audiopool setup
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         float currentVolumeIndex = (float) audioManager.getStreamVolume(streamType);
         float maxVolumeIndex  = (float) audioManager.getStreamMaxVolume(streamType);
