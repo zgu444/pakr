@@ -132,7 +132,7 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
      * while(true) main_iteration();
      */
     public void main_iteration(){
-        debugConsole.clear_history();
+        //debugConsole.clear_history();
         switch (current_state){
             case IDLE:
                 idle();
@@ -156,6 +156,11 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
     private void idle(){
         publishProgress("IDLE state");
     }
+    private enum ParallelStates{
+        RESET, OUT_OF_SIGHT, MID_BACK_OUT, BACK_END_OUT, END_OUT,
+        PARALLEL, FRONT_OUT, FRONT_MID_OUT, FRONT_MID_BACK_OUT
+    }
+    private ParallelStates parallel_status_flag = ParallelStates.RESET;
 
     /**
      * State will change if the back parking sensor is within 18~22 cm to the vehicle next to us
@@ -180,39 +185,70 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         //first whether vehicle is in sight
         if (isOutOfSight(front) && isOutOfSight(mid)
                 && isOutOfSight(back) && isOutOfSight(end)){
-            publishProgress("The reference vehicle is completely out of sight. Pull forward or go back");
+            if (parallel_status_flag != ParallelStates.OUT_OF_SIGHT) {
+                publishProgress("The reference vehicle is completely out of sight. Pull forward or go back");
+                parallel_status_flag = ParallelStates.OUT_OF_SIGHT;
+            }
             return;
         }
         //partially in sight
         if (!isOutOfSight(front) && isOutOfSight(mid)
                 && isOutOfSight(back) && isOutOfSight(end)) {
-            publishProgress("Front wheel sees reference vehicle, pull forward slowly");
+            if (parallel_status_flag != ParallelStates.MID_BACK_OUT) {
+                publishProgress("Front wheel sees reference vehicle, pull forward slowly");
+                parallel_status_flag = ParallelStates.MID_BACK_OUT;
+            }
+            return;
         }
         if (!isOutOfSight(front) && !isOutOfSight(mid)
                 && isOutOfSight(back) && isOutOfSight(end)) {
-            publishProgress("Front & mid wheel sees reference vehicle, pull forward slowly");
+            if (parallel_status_flag != ParallelStates.BACK_END_OUT) {
+                publishProgress("Front & mid wheel sees reference vehicle, pull forward slowly");
+                parallel_status_flag = ParallelStates.BACK_END_OUT;
+            }
+            return;
         }
         if (!isOutOfSight(front) && !isOutOfSight(mid)
                 && !isOutOfSight(back) && isOutOfSight(end)) {
-            publishProgress("We see the reference vehicle, pull forward very slowly");
+            if (parallel_status_flag != ParallelStates.END_OUT) {
+                publishProgress("We see the reference vehicle, pull forward very slowly");
+                parallel_status_flag = ParallelStates.END_OUT;
+            }
+            return;
         }
         //ideal position
         if (!isOutOfSight(front) && !isOutOfSight(mid)
                 && !isOutOfSight(back) && !isOutOfSight(end)) {
-            publishProgress("We have reached the ideal y position.");
+            if (parallel_status_flag != ParallelStates.PARALLEL) {
+                publishProgress("We have reached the ideal y position.Please stop!");
+                parallel_status_flag = ParallelStates.PARALLEL;
+            }
+            return;
         }
         //partially in sight in the other direction
         if (isOutOfSight(front) && !isOutOfSight(mid)
                 && !isOutOfSight(back) && !isOutOfSight(end)) {
-            publishProgress("Front wheel passed reference vehicle, go backwards slowly");
+            if (parallel_status_flag != ParallelStates.FRONT_OUT) {
+                publishProgress("Front wheel passed reference vehicle, go backwards slowly");
+                parallel_status_flag = ParallelStates.FRONT_OUT;
+            }
+            return;
         }
         if (isOutOfSight(front) && isOutOfSight(mid)
                 && !isOutOfSight(back) && !isOutOfSight(end)) {
-            publishProgress("Front & mid wheel passed reference vehicle, go backwards slowly");
+            if (parallel_status_flag != ParallelStates.FRONT_MID_OUT) {
+                publishProgress("Front & mid wheel passed reference vehicle, go backwards slowly");
+                parallel_status_flag = ParallelStates.FRONT_MID_OUT;
+            }
+            return;
         }
         if (isOutOfSight(front) && isOutOfSight(mid)
                 && isOutOfSight(back) && !isOutOfSight(end)) {
-            publishProgress("Most of car passed the reference vehicle, go backwards slowly");
+            if (parallel_status_flag != ParallelStates.FRONT_MID_BACK_OUT) {
+                publishProgress("Most of car passed the reference vehicle, go backwards slowly");
+                parallel_status_flag = ParallelStates.FRONT_MID_BACK_OUT;
+            }
+            return;
         }
     }
 
