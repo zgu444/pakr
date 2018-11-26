@@ -61,14 +61,18 @@
                 android:id="@+id/videoOverlay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
-            <TextView
+            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/debugText"
-                android:gravity = "bottom"
+                android:gravity = "top"
+                android:background="#07000000"
                 android:textSize="14sp"
                 android:singleLine="true"
-                android:textColor="#FFFFFF"/>
+                android:maxLines="40"
+                android:textColor="#FFFFFF"
+                android:inputType="text|textMultiLine|textCapSentences"
+                />
         </FrameLayout>
 
 
