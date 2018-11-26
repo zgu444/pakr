@@ -1,11 +1,9 @@
 package com.example.myfirstapp;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
-import android.graphics.RectF;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.VideoView;
+
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
 
 import org.easydarwin.video.EasyPlayerClient;
 
@@ -38,9 +40,24 @@ public class MainActivity extends AppCompatActivity {
     private Boolean filled = false;
     private Boolean parkingStarted = false;
     private RPISensorAdaptor my_rpi;
+
+
+    // Test code for playing audio
+    private SoundPool soundPool;
+    private AudioManager audioManager;
+    private static final int MAX_STREAMS = 5;
+    private static final int streamType = AudioManager.STREAM_MUSIC;
+
+    private boolean loaded;
+    private int soundIdDestroy;
+    private int soundIdGun;
+    private float volume;
+
+
     @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -52,9 +69,36 @@ public class MainActivity extends AppCompatActivity {
         final TextView textV = findViewById(R.id.playStatus);
         final CarPlotDemo carPlot = findViewById(R.id.carPlot);
         final TextureView textureView = findViewById(R.id.textureVideoMain);
+
         textureView.setOpaque(false);
         final EasyPlayerClient client = new EasyPlayerClient(this, KEY, textureView, null, null);
 
+
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        float currentVolumeIndex = (float) audioManager.getStreamVolume(streamType);
+        float maxVolumeIndex  = (float) audioManager.getStreamMaxVolume(streamType);
+        this.volume =  currentVolumeIndex/maxVolumeIndex;
+        this.setVolumeControlStream(streamType);
+
+        AudioAttributes audioAttrib = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+
+        SoundPool.Builder builder= new SoundPool.Builder();
+        builder.setAudioAttributes(audioAttrib).setMaxStreams(MAX_STREAMS);
+
+        this.soundPool = builder.build();
+        this.soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                loaded = true;
+            }
+        });
+
+        // Load sound files into SoundPool.
+        this.soundIdDestroy = this.soundPool.load(this, R.raw.test1,1);
+        this.soundIdGun = this.soundPool.load(this, R.raw.test_sound,1);
 
         playButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -64,6 +108,10 @@ public class MainActivity extends AppCompatActivity {
                     playing = false;
                     textV.setText("Not Playing");
                     playButton.setText("Play");
+
+                    if(loaded)  {
+                        soundPool.play(soundIdGun,volume, volume, 1, 0, 1f);
+                    }
                 }
                 else{
                     client.play(RTSP_ADDR);
@@ -82,6 +130,10 @@ public class MainActivity extends AppCompatActivity {
                     fillButton.setText("Fill");
                     carPlot.filled = false;
                     carPlot.invalidate();
+
+                    if(loaded)  {
+                        soundPool.play(soundIdDestroy, volume, volume, 1, 0, 1f);
+                    }
                 }
                 else{
                     carPlot.filled = true;
@@ -107,6 +159,15 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 myAlgo.startAlgo();
+
+                if (myAlgo.current_state == ParkingAlgo.ParkingState.IDLE){
+                    Log.d("idle", "hello");
+                    if(loaded)  {
+                        soundPool.play(soundIdGun, volume, volume, 1, 0, 1f);
+                    }
+                }
+
+
             }
         });
 
@@ -127,7 +188,6 @@ public class MainActivity extends AppCompatActivity {
 
         ReplotAsyncTask replotAsync = new ReplotAsyncTask();
         replotAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, carPlot, carPath);
-
 
         myAlgo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
