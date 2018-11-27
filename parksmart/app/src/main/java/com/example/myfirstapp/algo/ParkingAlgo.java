@@ -37,8 +37,13 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
     private static final int MAX_STREAMS = 5;
     private static final int streamType = AudioManager.STREAM_MUSIC;
     private boolean loaded;
-    private int soundIdDestroy;
-    private int soundIdGun;
+    private int all_left;
+    private int all_right;
+    private int pull_forward;
+    private int reverse;
+    private int stop;
+    private int to_left;
+    private int to_right;
     private float volume;
 
 
@@ -75,8 +80,13 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         });
 
         // Load sound files into SoundPool.
-        this.soundIdDestroy = this.soundPool.load(mainActivity, R.raw.test1,1);
-        this.soundIdGun = this.soundPool.load(mainActivity, R.raw.test_sound,1);
+        this.all_left = this.soundPool.load(mainActivity, R.raw.all_left,1);
+        this.all_right = this.soundPool.load(mainActivity, R.raw.all_right,1);
+        this.pull_forward = this.soundPool.load(mainActivity, R.raw.pull_forward, 1);
+        this.reverse = this.soundPool.load(mainActivity, R.raw.reverse,1);
+        this.stop = this.soundPool.load(mainActivity, R.raw.stop,1);
+        this.to_left = this.soundPool.load(mainActivity, R.raw.to_left, 1);
+        this.to_right = this.soundPool.load(mainActivity, R.raw.to_right, 1);
 
     }
 
@@ -106,7 +116,7 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         super.onProgressUpdate(values);
         for (String s: values) {
             if (s.equals("Front wheel sees reference vehicle, pull forward slowly")){
-                soundPool.play(soundIdGun, volume, volume, 1, 0, 1f);
+                soundPool.play(pull_forward, volume, volume, 1, 0, 1f);
             }
             debugConsole.log(s);
             Log.d("ALGO", s);
