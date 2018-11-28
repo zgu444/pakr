@@ -116,7 +116,7 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         super.onProgressUpdate(values);
         for (String s: values) {
             if (s.equals("Front wheel sees reference vehicle, pull forward slowly")){
-                soundPool.play(pull_forward, volume, volume, 1, 0, 1f);
+                soundPool.play(pull_forward, volume, volume, 1, 1, 1f);
             }
             debugConsole.log(s);
             Log.d("ALGO", s);
