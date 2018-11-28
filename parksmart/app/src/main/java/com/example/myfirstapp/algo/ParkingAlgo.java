@@ -40,6 +40,8 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
     private int all_left;
     private int all_right;
     private int pull_forward;
+    private int to_reference;
+    private int go_back;
     private int reverse;
     private int stop;
     private int to_left;
@@ -83,8 +85,10 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         this.all_left = this.soundPool.load(mainActivity, R.raw.all_left,1);
         this.all_right = this.soundPool.load(mainActivity, R.raw.all_right,1);
         this.pull_forward = this.soundPool.load(mainActivity, R.raw.pull_forward, 1);
+        this.go_back = this.soundPool.load(mainActivity, R.raw.go_back, 1);
         this.reverse = this.soundPool.load(mainActivity, R.raw.reverse,1);
         this.stop = this.soundPool.load(mainActivity, R.raw.stop,1);
+        this.to_reference = this.soundPool.load(mainActivity, R.raw.to_reference, 1);
         this.to_left = this.soundPool.load(mainActivity, R.raw.to_left, 1);
         this.to_right = this.soundPool.load(mainActivity, R.raw.to_right, 1);
 
@@ -115,11 +119,37 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
     protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
         for (String s: values) {
-            if (s.equals("Front wheel sees reference vehicle, pull forward slowly")){
-                soundPool.play(pull_forward, volume, volume, 1, 1, 1f);
-            }
+
             debugConsole.log(s);
             Log.d("ALGO", s);
+
+            if (s.equals(AlgoConstants.PULL_FORWARD) || s.equals(AlgoConstants.PULL_FORWARD_1)
+                    || s.equals(AlgoConstants.PULL_FORWARD_2)){
+                soundPool.play(pull_forward, volume, volume, 1, 0, 1f);
+            }
+            else if (s.equals(AlgoConstants.GO_BACK) || s.equals(AlgoConstants.GO_BACK_1)
+                    ||s.equals(AlgoConstants.GO_BACK_2)){
+                soundPool.play(go_back, volume, volume, 1, 0, 1f);
+            }
+            else if (s.equals(AlgoConstants.ENTER_REVERSE)) {
+                soundPool.play(reverse, volume, volume, 1, 0, 1f);
+            }
+            else if (s.equals(AlgoConstants.REVERSE_LEFT)){
+                soundPool.play(all_left, volume, volume, 1, 0, 1f);
+            }
+            else if (s.equals(AlgoConstants.TO_LEFT)){
+                soundPool.play(to_left, volume, volume, 1, 0, 1f);
+            }
+            else if (s.equals(AlgoConstants.TO_RIGHT)){
+                soundPool.play(to_right, volume, volume, 1, 0, 1f);
+            }
+            else if (s.equals(AlgoConstants.OUT_SIGHT)){
+                soundPool.play(to_reference, volume, volume, 1, 0, 1f);
+            }
+            else if (s.equals(AlgoConstants.STOP)){
+                soundPool.play(stop, volume, volume, 1, 0, 1f);
+            }
+
         }
     }
 
@@ -139,7 +169,6 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
             }
         }
         SensorCoordinate[] coordinates = myAdaptor.getSensors();
-
         for (SensorCoordinate coord : coordinates) {
             switch (coord.sensorType) {
                 case LEFT_FRONT:
@@ -188,6 +217,8 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
 
             }
 
+            parallel_status_flag = ParallelStates.RESET;
+            distance_status_flag = DistanceStates.RESET;
     }
 
     public void endAlgo(){
@@ -240,6 +271,7 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         float front = right_sensors.get(0).getRaw();
         float mid = right_sensors.get(1).getRaw();
         float back = right_sensors.get(2).getRaw();
+        //publishProgress("end "+end+" front "+front+" mid "+mid+" back "+back);
 
         withinSightCheck(front, mid, back, end);
         distanceAngleCheck(front, mid, back, end);
@@ -247,7 +279,7 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         if (parallel_status_flag == ParallelStates.PARALLEL
                 && distance_status_flag == DistanceStates.IN_RANGE){
             current_state = ParkingState.FULL_RIGHT;
-            publishProgress("That's a good parallel spot! Entering reverse state");
+            publishProgress(AlgoConstants.ENTER_REVERSE);
             /**
              * Insert instruction for reverse right here!!
              */
@@ -263,14 +295,14 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         Log.d("algo","front: "+front+"mid: "+mid+"back: "+back+"end: "+end);
         if (isTooClose(end)){
             if (distance_status_flag != DistanceStates.TOO_CLOSE){
-                publishProgress("Some part of the vehicle is too close to the reference car");
+                publishProgress(AlgoConstants.TO_LEFT);
                 distance_status_flag = DistanceStates.TOO_CLOSE;
             }
             return;
         }
         if (isTooFar(end)){
             if (distance_status_flag != DistanceStates.TOO_FAR){
-                publishProgress("Some part of the vehicle is too far to the reference car");
+                publishProgress(AlgoConstants.TO_RIGHT);
                 distance_status_flag = DistanceStates.TOO_FAR;
             }
             return;
@@ -290,7 +322,7 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
                 && isOutOfSight(back) && isOutOfSight(end)){
             if (parallel_status_flag != ParallelStates.OUT_OF_SIGHT) {
                 if (parallel_status_flag != ParallelStates.HALF_BACK_OUT)
-                    publishProgress("The reference vehicle is completely out of sight. Pull forward or go back");
+                    publishProgress(AlgoConstants.OUT_SIGHT);
                 parallel_status_flag = ParallelStates.OUT_OF_SIGHT;
             }
             return;
@@ -299,7 +331,7 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         if (!isOutOfSight(front) && isOutOfSight(mid)
                 && isOutOfSight(back) && isOutOfSight(end)) {
             if (parallel_status_flag != ParallelStates.HALF_BACK_OUT) {
-                publishProgress("Front wheel sees reference vehicle, pull forward slowly");
+                publishProgress(AlgoConstants.PULL_FORWARD);
                 parallel_status_flag = ParallelStates.HALF_BACK_OUT;
             }
             return;
@@ -307,7 +339,7 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         if (!isOutOfSight(front) && !isOutOfSight(mid)
                 && isOutOfSight(back) && isOutOfSight(end)) {
             if (parallel_status_flag != ParallelStates.HALF_BACK_OUT) {
-                publishProgress("Front & mid wheel sees reference vehicle, pull forward slowly");
+                publishProgress(AlgoConstants.PULL_FORWARD_1);
                 parallel_status_flag = ParallelStates.HALF_BACK_OUT;
             }
             return;
@@ -315,7 +347,7 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         if (!isOutOfSight(front) && !isOutOfSight(mid)
                 && !isOutOfSight(back) && isOutOfSight(end)) {
             if (parallel_status_flag != ParallelStates.HALF_BACK_OUT) {
-                publishProgress("We see the reference vehicle, pull forward very slowly");
+                publishProgress(AlgoConstants.PULL_FORWARD_2);
                 parallel_status_flag = ParallelStates.HALF_BACK_OUT;
             }
             return;
@@ -333,7 +365,7 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         if (isOutOfSight(front) && !isOutOfSight(mid)
                 && !isOutOfSight(back) && !isOutOfSight(end)) {
             if (parallel_status_flag != ParallelStates.HALF_FRONT_OUT) {
-                publishProgress("Front wheel passed reference vehicle, go backwards slowly");
+                publishProgress(AlgoConstants.GO_BACK);
                 parallel_status_flag = ParallelStates.HALF_FRONT_OUT;
             }
             return;
@@ -341,7 +373,7 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         if (isOutOfSight(front) && isOutOfSight(mid)
                 && !isOutOfSight(back) && !isOutOfSight(end)) {
             if (parallel_status_flag != ParallelStates.HALF_FRONT_OUT) {
-                publishProgress("Front & mid wheel passed reference vehicle, go backwards slowly");
+                publishProgress(AlgoConstants.GO_BACK_1);
                 parallel_status_flag = ParallelStates.HALF_FRONT_OUT;
             }
             return;
@@ -349,7 +381,7 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         if (isOutOfSight(front) && isOutOfSight(mid)
                 && isOutOfSight(back) && !isOutOfSight(end)) {
             if (parallel_status_flag != ParallelStates.HALF_FRONT_OUT) {
-                publishProgress("Most of car passed the reference vehicle, go backwards slowly");
+                publishProgress(AlgoConstants.GO_BACK_2);
                 parallel_status_flag = ParallelStates.HALF_FRONT_OUT;
             }
             return;
@@ -363,7 +395,7 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         float front = right_sensors.get(0).getRaw();
         if (front >= 200){
             current_state = ParkingState.FULL_LEFT;
-            publishProgress("Entering reverse left");
+            publishProgress(AlgoConstants.REVERSE_LEFT);
         }
 
 
@@ -376,7 +408,7 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         float rear = back_sensors.get(0).getRaw();
         if (rear <= 20){
             current_state = ParkingState.IDLE;
-            publishProgress("Done! Stop!");
+            publishProgress(AlgoConstants.STOP);
         }
 
     }
