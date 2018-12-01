@@ -40,18 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private Boolean filled = false;
     private Boolean parkingStarted = false;
     private RPISensorAdaptor my_rpi;
-
-
-    // Test code for playing audio
-    private SoundPool soundPool;
     private AudioManager audioManager;
-    private static final int MAX_STREAMS = 5;
-    private static final int streamType = AudioManager.STREAM_MUSIC;
-
-    private boolean loaded;
-    private int soundIdDestroy;
-    private int soundIdGun;
-    private float volume;
 
 
     @SuppressLint("NewApi")
@@ -66,39 +55,14 @@ public class MainActivity extends AppCompatActivity {
         final Button startParkButton = findViewById(R.id.startParkButton);
         final Button endParkButton = findViewById(R.id.endParkButton);
 
-        final TextView textV = findViewById(R.id.playStatus);
+//        final TextView textV = findViewById(R.id.playStatus);
         final CarPlotDemo carPlot = findViewById(R.id.carPlot);
         final TextureView textureView = findViewById(R.id.textureVideoMain);
 
         textureView.setOpaque(false);
         final EasyPlayerClient client = new EasyPlayerClient(this, KEY, textureView, null, null);
-
-
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        float currentVolumeIndex = (float) audioManager.getStreamVolume(streamType);
-        float maxVolumeIndex  = (float) audioManager.getStreamMaxVolume(streamType);
-        this.volume =  currentVolumeIndex/maxVolumeIndex;
-        this.setVolumeControlStream(streamType);
 
-        AudioAttributes audioAttrib = new AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_GAME)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .build();
-
-        SoundPool.Builder builder= new SoundPool.Builder();
-        builder.setAudioAttributes(audioAttrib).setMaxStreams(MAX_STREAMS);
-
-        this.soundPool = builder.build();
-        this.soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
-            @Override
-            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
-                loaded = true;
-            }
-        });
-
-        // Load sound files into SoundPool.
-        this.soundIdDestroy = this.soundPool.load(this, R.raw.test1,1);
-        this.soundIdGun = this.soundPool.load(this, R.raw.test_sound,1);
 
         playButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -106,17 +70,14 @@ public class MainActivity extends AppCompatActivity {
                 if (playing){
                     client.stop();
                     playing = false;
-                    textV.setText("Not Playing");
+//                    textV.setText("Not Playing");
                     playButton.setText("Play");
 
-                    if(loaded)  {
-                        soundPool.play(soundIdGun,volume, volume, 1, 0, 1f);
-                    }
                 }
                 else{
                     client.play(RTSP_ADDR);
                     playing = true;
-                    textV.setText("Playing");
+//                    textV.setText("Playing");
                     playButton.setText("Pause");
                 }
             }
@@ -131,9 +92,6 @@ public class MainActivity extends AppCompatActivity {
                     carPlot.filled = false;
                     carPlot.invalidate();
 
-                    if(loaded)  {
-                        soundPool.play(soundIdDestroy, volume, volume, 1, 0, 1f);
-                    }
                 }
                 else{
                     carPlot.filled = true;
@@ -145,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final ParkingAlgo myAlgo = new ParkingAlgo(new OverlayConsole((EditText) findViewById(R.id.debugText)));
+        final ParkingAlgo myAlgo = new ParkingAlgo(new OverlayConsole((EditText) findViewById(R.id.debugText)), this, audioManager);
 
         startParkButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -159,13 +117,6 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 myAlgo.startAlgo();
-
-                if (myAlgo.current_state == ParkingAlgo.ParkingState.IDLE){
-                    Log.d("idle", "hello");
-                    if(loaded)  {
-                        soundPool.play(soundIdGun, volume, volume, 1, 0, 1f);
-                    }
-                }
 
 
             }
@@ -186,10 +137,11 @@ public class MainActivity extends AppCompatActivity {
         my_rpi = RPISensorAdaptor.get_rpiadaptor();
         my_rpi.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
+        myAlgo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
         ReplotAsyncTask replotAsync = new ReplotAsyncTask();
         replotAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, carPlot, carPath);
 
-        myAlgo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
 
     }

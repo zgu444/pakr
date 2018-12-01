@@ -80,38 +80,38 @@ void loop() {
       sonar[currentSensor].ping_timer(echoCheck); // Do the ping (processing continues, interrupt will call echoCheck to look for echo).
     }
   }
-  Wire.begin();
-  Wire.beginTransmission(MPU);
-  Wire.write(0x3B);
-  int res = Wire.endTransmission(false);
-  if  (res == 0) Wire.requestFrom(MPU,14,true);
-  
-  int AcXoff,AcYoff,AcZoff,GyXoff,GyYoff,GyZoff;
-  int temp,toff;
-  double t,tx,tf;
-  
-  //Acceleration data correction
-  AcXoff = -950;
-  AcYoff = -300;
-  AcZoff = 0;
-  
-  //Gyro correction
-  GyXoff = 480;
-  GyYoff = 170;
-  GyZoff = 210;
-  
-  //read accel data
-  if (Wire.available() ) AcX=(Wire.read()<<8|Wire.read()) + AcXoff;
-  if (Wire.available() ) AcY=(Wire.read()<<8|Wire.read()) + AcYoff;
-  if (Wire.available() ) AcZ=(Wire.read()<<8|Wire.read()) + AcYoff;
-  
-  //read gyro data
-  if (Wire.available() ) GyX=(Wire.read()<<8|Wire.read()) + GyXoff;
-  if (Wire.available() ) GyY=(Wire.read()<<8|Wire.read()) + GyYoff;
-  if (Wire.available() ) GyZ=(Wire.read()<<8|Wire.read()) + GyZoff;
-  
-  //get pitch/roll
-  getAngle(AcX,AcY,AcZ);
+//  Wire.begin();
+//  Wire.beginTransmission(MPU);
+//  Wire.write(0x3B);
+//  int res = Wire.endTransmission(false);
+//  if  (res == 0) Wire.requestFrom(MPU,14,true);
+//  
+//  int AcXoff,AcYoff,AcZoff,GyXoff,GyYoff,GyZoff;
+//  int temp,toff;
+//  double t,tx,tf;
+//  
+//  //Acceleration data correction
+//  AcXoff = -950;
+//  AcYoff = -300;
+//  AcZoff = 0;
+//  
+//  //Gyro correction
+//  GyXoff = 480;
+//  GyYoff = 170;
+//  GyZoff = 210;
+//  
+//  //read accel data
+//  if (Wire.available() ) AcX=(Wire.read()<<8|Wire.read()) + AcXoff;
+//  if (Wire.available() ) AcY=(Wire.read()<<8|Wire.read()) + AcYoff;
+//  if (Wire.available() ) AcZ=(Wire.read()<<8|Wire.read()) + AcYoff;
+//  
+//  //read gyro data
+//  if (Wire.available() ) GyX=(Wire.read()<<8|Wire.read()) + GyXoff;
+//  if (Wire.available() ) GyY=(Wire.read()<<8|Wire.read()) + GyYoff;
+//  if (Wire.available() ) GyZ=(Wire.read()<<8|Wire.read()) + GyZoff;
+//  
+//  //get pitch/roll
+//  getAngle(AcX,AcY,AcZ);
 }
 
 void echoCheck() { // If ping received, set the sensor distance to array.
@@ -153,4 +153,3 @@ void getAngle(int Vx,int Vy,int Vz) {
   roll = roll * (180.0/PI) ;
   yaw = yaw * (180/0/PI);
 } 
-
