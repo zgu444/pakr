@@ -13,8 +13,10 @@
 #define ECHO_PIN_7 7
 #define TRIGGER_PIN_8 5 
 #define ECHO_PIN_8 4
+#define TRIGGER_PIN_9 3
+#define ECHO_PIN_9 2
 
-#define SONAR_NUM 5
+#define SONAR_NUM 6
 #define MAX_DISTANCE 200
 #define PING_INTERVAL 33 // Milliseconds between sensor pings (29ms is about the min to avoid cross-sensor echo).
 
@@ -29,7 +31,8 @@ NewPing sonar[SONAR_NUM] = {
     NewPing(TRIGGER_PIN_5, ECHO_PIN_5, MAX_DISTANCE), 
     NewPing(TRIGGER_PIN_6, ECHO_PIN_6, MAX_DISTANCE), 
     NewPing(TRIGGER_PIN_7, ECHO_PIN_7, MAX_DISTANCE),
-    NewPing(TRIGGER_PIN_8, ECHO_PIN_8, MAX_DISTANCE)
+    NewPing(TRIGGER_PIN_8, ECHO_PIN_8, MAX_DISTANCE),
+    NewPing(TRIGGER_PIN_9, ECHO_PIN_9, MAX_DISTANCE)
 };
 
 void setup() {
@@ -68,8 +71,8 @@ void oneSensorCycle() { // Sensor ping cycle complete, do something with the res
     if (cm[i] == 0) cm[i] = MAX_DISTANCE;
   }
       if (inChar == 'p') {
-        sprintf(readings, "%u, %u, %u, %u, %u", 
-        cm[0], cm[1], cm[2], cm[3], cm[4]);
+        sprintf(readings, "%u, %u, %u, %u, %u, %u", 
+        cm[0], cm[1], cm[2], cm[3], cm[4], cm[5]);
         while(Serial.available()) {Serial.read();}
         Serial.println(readings);
 //        Serial.println("Here\n");
