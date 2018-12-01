@@ -406,7 +406,9 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
      */
     private void reverse_left(){
         float rear = back_sensors.get(0).getRaw();
-        if (rear <= 40){
+        float front1 = front_sensors.get(0).getRaw();
+        float front2 = front_sensors.get(1).getRaw();
+        if (Math.abs(front1 - front2) <= 5 || rear <= 40){
             current_state = ParkingState.IDLE;
             publishProgress(AlgoConstants.STOP);
         }
