@@ -120,7 +120,7 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         super.onProgressUpdate(values);
         for (String s: values) {
 
-            debugConsole.log(s);
+            //debugConsole.log(s);
             Log.d("ALGO", s);
 
             if (s.equals(AlgoConstants.PULL_FORWARD) || s.equals(AlgoConstants.PULL_FORWARD_1)
@@ -393,7 +393,8 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
      */
     private void reverse_right(){
         float front = right_sensors.get(0).getRaw();
-        if (front >= 200){
+        float mid = right_sensors.get(1).getRaw();
+        if (front >= 200 && mid >= 130){
             current_state = ParkingState.FULL_LEFT;
             publishProgress(AlgoConstants.REVERSE_LEFT);
         }
@@ -406,7 +407,7 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
      */
     private void reverse_left(){
         float rear = back_sensors.get(0).getRaw();
-        if (rear <= 20){
+        if (rear <= 40){
             current_state = ParkingState.IDLE;
             publishProgress(AlgoConstants.STOP);
         }
