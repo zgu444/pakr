@@ -5,6 +5,7 @@
 #include <NewPing.h>
 #include<Wire.h>
 #include <math.h>
+#include <avr/wdt.h>
 
 const int MPU=0x68;
 int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
@@ -48,9 +49,27 @@ void setup() {
   pingTimer[i] = pingTimer[i - 1] + PING_INTERVAL;
     
   Serial.begin(115200);
+  
+//  // initialize the digital pin as an output.
+//  // Pin 13 has an LED connected on most Arduino boards:
+//  pinMode(13, OUTPUT);
+//
+//  // at bootup, flash LED 3 times quick so I know the reboot has occurred.
+//
+//  for (int k = 1; k <= 3; k = k + 1) {
+//      digitalWrite(13, HIGH);
+//      delay(250L);
+//      digitalWrite(13, LOW);
+//      delay(250L);
+//      }
+//  // delay a bit more so it is clear we are done with setup
+//  delay(500L);
+    
+  wdt_enable(WDTO_500MS);
 }
  
 void loop() {
+  wdt_reset();
   for (uint8_t i = 0; i < SONAR_NUM; i++) { // Loop through all the sensors.
     if (millis() >= pingTimer[i]) {         // Is it this sensor's time to ping?
       pingTimer[i] += PING_INTERVAL * SONAR_NUM;  // Set next time this sensor will be pinged.
