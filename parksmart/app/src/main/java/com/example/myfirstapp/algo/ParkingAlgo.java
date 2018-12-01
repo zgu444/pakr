@@ -320,9 +320,8 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
         //first whether vehicle is in sight
         if (isOutOfSight(front) && isOutOfSight(mid)
                 && isOutOfSight(back) && isOutOfSight(end)){
-            if (parallel_status_flag != ParallelStates.OUT_OF_SIGHT) {
-                if (parallel_status_flag != ParallelStates.HALF_BACK_OUT)
-                    publishProgress(AlgoConstants.OUT_SIGHT);
+            if (parallel_status_flag == ParallelStates.RESET) {
+                publishProgress(AlgoConstants.OUT_SIGHT);
                 parallel_status_flag = ParallelStates.OUT_OF_SIGHT;
             }
             return;
