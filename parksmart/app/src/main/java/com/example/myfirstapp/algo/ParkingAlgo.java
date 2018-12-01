@@ -98,15 +98,15 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
     Helper methods that define the constant ranges
      */
     private boolean isTooClose(float distance){
-        return distance <= 35;
+        return distance <= 30;
     }
 
     private boolean isInRange(float distance){
-        return distance > 35 && distance <= 44;
+        return distance > 30 && distance <= 50;
     }
 
     private boolean isTooFar(float distance){
-        return distance > 44 && distance <= 85;
+        return distance > 50 && distance <= 85;
     }
 
     private boolean isOutOfSight(float distance){
