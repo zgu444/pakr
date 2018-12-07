@@ -98,15 +98,15 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
     Helper methods that define the constant ranges
      */
     private boolean isTooClose(float distance){
-        return distance <= 35;
+        return distance <= 30;
     }
 
     private boolean isInRange(float distance){
-        return distance > 35 && distance <= 44;
+        return distance > 30 && distance <= 50;
     }
 
     private boolean isTooFar(float distance){
-        return distance > 44 && distance <= 85;
+        return distance > 50 && distance <= 85;
     }
 
     private boolean isOutOfSight(float distance){
@@ -406,7 +406,9 @@ public class ParkingAlgo extends AsyncTask<Void, String, Void>{
      */
     private void reverse_left(){
         float rear = back_sensors.get(0).getRaw();
-        if (rear <= 40){
+        float front1 = front_sensors.get(0).getRaw();
+        float front2 = front_sensors.get(1).getRaw();
+        if (Math.abs(front1 - front2) <= 5 || rear <= 40){
             current_state = ParkingState.IDLE;
             publishProgress(AlgoConstants.STOP);
         }
