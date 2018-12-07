@@ -38,34 +38,33 @@ NewPing (TRIGGER_PIN_3, ECHO_PIN_3, MAX_DISTANCE)
 };
 
 void setup() {
-  Wire.begin();
-  Wire.beginTransmission(MPU);
-  Wire.write(0x6B);
-  Wire.write(0);
-  Wire.endTransmission(true);
-
   pingTimer[0] = millis() + 75;           // First ping starts at 75ms, gives time for the Arduino to chill before starting.
   for (uint8_t i = 1; i < SONAR_NUM; i++) // Set the starting time for each sensor.
   pingTimer[i] = pingTimer[i - 1] + PING_INTERVAL;
     
   Serial.begin(115200);
   
-//  // initialize the digital pin as an output.
-//  // Pin 13 has an LED connected on most Arduino boards:
+  // initialize the digital pin as an output.
+  // Pin 13 has an LED connected on most Arduino boards:
 //  pinMode(13, OUTPUT);
-//
-//  // at bootup, flash LED 3 times quick so I know the reboot has occurred.
-//
-//  for (int k = 1; k <= 3; k = k + 1) {
-//      digitalWrite(13, HIGH);
-//      delay(250L);
-//      digitalWrite(13, LOW);
-//      delay(250L);
-//      }
-//  // delay a bit more so it is clear we are done with setup
-//  delay(500L);
+
+  // at bootup, flash LED 3 times quick so I know the reboot has occurred.
+
+  for (int k = 0; k < 5; k++ ) {
+      digitalWrite(13, HIGH);
+      delay(100L);
+      digitalWrite(13, LOW);
+      delay(100L);
+      }
+  // delay a bit more so it is clear we are done with setup
+  delay(250L);
     
   wdt_enable(WDTO_500MS);
+  Wire.begin();
+  Wire.beginTransmission(MPU);
+  Wire.write(0x6B);
+  Wire.write(0);
+  Wire.endTransmission(true);
 }
  
 void loop() {
